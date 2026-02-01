@@ -13,10 +13,11 @@ class Game:
         self.RES = (640, 360)
         self.FPS = 60
 
-        self.screen = pg.display.set_mode(self.RES, pg.FULLSCREEN | pg.SCALED)
+        self.screen = pg.display.set_mode(self.RES, pg.SCALED | pg.RESIZABLE )
         self.display = pg.Surface(self.RES)
-
         pg.display.set_caption("Galaxaris level editor")
+
+        self.control_panel = ut.ControlPanel(self)
 
         self.clock = pg.time.Clock()
         self.running = True
@@ -27,7 +28,9 @@ class Game:
         self.permanent_layers = {0, 1} #every layer that are not rendered again each frame
         self.parallax_layers = []
         self.buttons = []
-        self.grid1 = []
+        self.grid = []
+        self.objects = []
+        self.object_to_place = 0
         self.font = pg.font.Font("fonts/FRm6x11.ttf", 16) #this font is a modified version of this one https://managore.itch.io/m6x11, it now handles French accents thanks to me, axel.
 
         try:
@@ -74,9 +77,12 @@ class Game:
 
                         self.parallax_layers.sort(key=lambda parallax: parallax.speed.x)
 
+                elif event.key == pg.K_F11:
+                    pg.display.toggle_fullscreen()
+
     def _update(self):
         """Run any logic not related to drawing"""
-        pass
+        self.control_panel.update()
 
     def _draw(self):
         """Draw things on the screen"""

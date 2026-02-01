@@ -1,5 +1,6 @@
 import pygame as pg
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
 
 #The master of this place is I, Axel. Contact me if you have a problem with this module or the game class in general
@@ -119,3 +120,127 @@ class TextureButton:
 
 def xy_to_grid(pos: tuple[int, int]) -> tuple[int, int]:
     return pos[0]//32, pos[1]//32
+
+class Object:
+    def __init__(self):
+        self.texture = None
+        self.color = None
+        self.property = None
+        self.type = None
+        self.texture_type = None
+
+class ControlPanel:
+    def __init__(self, master):
+        self.master = master
+        self.root = tk.Tk()
+        self.root.title("Control Panel")
+        self.root.geometry("720x720")
+
+        self.root.resizable(False, False)
+
+        self.root.protocol("WM_DELETE_WINDOW", self.disable_event)
+
+        self.bg_color = "#2b2b2b"
+        self.fg_color = "#ffffff"
+        self.input_bg = "#3c3f41"
+        self.accent_color = "#4a90e2"
+        self.root.configure(bg=self.bg_color)
+
+        self.actual_object = Object()
+
+        self.setup_styles()
+        self.create_ui()
+
+    def setup_styles(self):
+        """Style configuration using ttk"""
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure("TCombobox", fieldbackground=self.input_bg, background=self.input_bg, foreground=self.fg_color)
+        style.configure("TLabel", background=self.bg_color, foreground=self.fg_color, font=('Arial', 10, 'bold'))
+
+    def create_ui(self):
+        l_frame = tk.Frame(self.root, bg=self.bg_color, padx=20, pady=20)
+        l_frame.grid(row=0, column=0, sticky="ns")
+
+        tk.Label(l_frame, text="OBJECT", bg=self.bg_color, fg=self.fg_color,
+                 font=('Arial', 14, 'bold', 'underline')).pack(anchor="w")
+
+        self.obj_cbb = ttk.Combobox(l_frame, values=["Player", "Enemy", "Wall"], width=15)
+        self.obj_cbb.pack(pady=(10, 5))
+
+        tk.Label(l_frame, text="OR", bg=self.bg_color, fg=self.fg_color).pack(pady=5)
+
+        # BUTTON NEW
+        tk.Button(l_frame, text="NEW", bg=self.accent_color, fg="white", width=10, relief="flat").pack(pady=5)
+
+        # LINE
+        separator = tk.Frame(self.root, bg="#444444", width=2)
+        separator.grid(row=0, column=1, sticky="ns", pady=20)
+
+        r_frame = tk.Frame(self.root, bg=self.bg_color, padx=20, pady=20)
+        r_frame.grid(row=0, column=2, sticky="nsew")
+
+        # NAME
+        tk.Label(r_frame, text="NAME", bg=self.bg_color, fg=self.fg_color).pack(anchor="w")
+        self.name_ntr = tk.Entry(r_frame, bg=self.input_bg, fg=self.fg_color, insertbackground="white",borderwidth=0)
+        self.name_ntr.pack(fill="x", pady=(0, 15))
+        self.name_ntr.bind("<KeyRelease>", self.update_name)
+
+        # COLOR
+        tk.Label(r_frame, text="COLOR (in the editor and hex format)", bg=self.bg_color, fg=self.fg_color).pack(anchor="w")
+        self.color_ntr = tk.Entry(r_frame, bg=self.input_bg, fg=self.fg_color, insertbackground="white",borderwidth=0)
+        self.color_ntr.pack(fill="x", pady=(0, 15))
+        self.color_ntr.bind("<KeyRelease>", self.update_color)
+
+        # TYPE
+        tk.Label(r_frame, text="TYPE", bg=self.bg_color, fg=self.fg_color).pack(anchor="w")
+        self.type_cbb = ttk.Combobox(r_frame, values=["block","enemy", "player", "item", "decoration", "event trigger"], state="readonly")
+        self.type_cbb.pack(fill="x", pady=(0, 15))
+        self.type_cbb.bind("<<ComboboxSelected>>", self.update_type)
+
+        # PROPERTIES
+        tk.Label(r_frame, text="PROPERTIES", bg=self.bg_color, fg=self.fg_color).pack(anchor="w")
+        self.prop_cbb = ttk.Combobox(r_frame, values=["SOLID", "FIXED_POSITION", "BREAKABLE"], state="readonly")
+        self.prop_cbb.pack(fill="x", pady=(0, 15))
+        self.prop_cbb.bind("<<ComboboxSelected>>", self.update_property)
+
+        # TEXTURE TYPE
+        tk.Label(r_frame, text="TEXTURE TYPE", bg=self.bg_color, fg=self.fg_color).pack(anchor="w")
+        self.tex_cbb = ttk.Combobox(r_frame, values=["no texture", "single", "tile set", "sprite sheet"], state="readonly")
+        self.tex_cbb.pack(fill="x", pady=(0, 15))
+        self.tex_cbb.bind("<<ComboboxSelected>>", self.update_texture_type)
+
+        # BUTTON ADD TEXT
+        tk.Button(r_frame, text="ADD TEXTURE", bg="#444444", fg="white", relief="flat").pack(pady=10)
+
+        # BUTTON DELETE OBJECT
+        tk.Label(l_frame, text="DANGER ZONE", bg=self.bg_color, fg="#ff4444", font=('Arial', 8, 'bold')).pack(anchor="w", pady=(80, 0))
+        tk.Button(l_frame, text="DELETE OBJECT", bg="#992222", fg="white", relief="flat", font=('Arial', 10, 'bold'), command=self.delete_object_action).pack(fill="x", pady=5)
+
+    def update_name(self):
+        self.actual_object.name = self.name_ntr.get()
+
+    def update_color(self):
+        self.actual_object.color = self.color_ntr.get()
+
+    def update_texture(self):
+        self.actual_object.texture = get_file_path(message="Choose a texture image")
+
+    def update_texture_type(self, event):
+        self.actual_object.texture_type = self.tex_cbb.get()
+
+    def update_property(self, event):
+        self.actual_object.property = self.pop_cbb.get()
+
+    def update_type(self, event):
+        self.actual_object.type = self.type_cbb.get()
+
+    def delete_object_action(self):
+        pass
+
+    def disable_event(self):
+        # When the user try to kill this window it redirect to this function that does nothing instead
+        pass
+
+    def update(self):
+        self.root.update() #used to update this window in our app so it can run at the same time without blocking it in a while loop
