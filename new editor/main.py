@@ -21,21 +21,44 @@ class PgApp:
         pg.init()
         self.RES = (640, 360)
         WIDTH, HEIGHT = self.RES
+        self.scale_ratio = self.RES[0]/real_w
         self.FPS = 60
         self.font = pg.font.Font("fonts/FRm6x11.ttf", 16) #this font is a modified version of this one https://managore.itch.io/m6x11, it now handles French accents thanks to me, axel.
 
+        self.cam_offset = pg.Vector2(0, 0)
+
         self.game = Game(real_w, real_h, WIDTH, HEIGHT,"Editor", pg.SCALED | pg.NOFRAME, self.FPS)
+
+        self.game.bind(pg.MOUSEMOTION, self.update_camera_pos)
         self.game.run(self.loop)
+
+    def update_camera_pos(self, event: pg.event.Event):
+        if pg.mouse.get_pressed()[2]:
+            delta = pg.Vector2(event.rel)
+            self.cam_offset -= delta * self.scale_ratio
 
     def loop(self, master):
         self.control_panel.update()
-        pg.draw.rect(master.screen, (170,130,125), (0, 0, 640, 360), 1)
+
+        master.screen.blit(self.render_grid(), (0,0))
 
         fps_count = self.font.render(f"FPS : {int(master.clock.get_fps())}", False, (200,200,200,150)).convert_alpha()
         master.screen.blit(fps_count, (0,0))
 
+    def render_grid(self):
+        grid = pg.Surface(self.RES, pg.SRCALPHA)
+
+        offset = pg.Vector2(self.cam_offset.x % 32, self.cam_offset.y % 32)
+
+        for i in range(21):
+            pg.draw.line(grid, (200, 200, 200, 50), (32 * i, 0) - offset, (32 * i, self.RES[1] + 32) - offset, width=1)
+
+        for j in range(13):
+            pg.draw.line(grid, (200, 200, 200, 50), (0, 32 * j) - offset, (self.RES[0] + 32, 32 * j) - offset, width=1)
+        return grid
+
 class TkApp:
-    def __init__(self,master):
+    def __init__(self, master):
         self.master = master
         self.root = tk.Tk()
         self.root.title("Galaxaris editor")
