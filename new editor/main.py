@@ -1,5 +1,8 @@
 import tkinter as tk
 import pygame as pg
+import zipfile as zip
+import json
+import io
 import os
 
 from api.Game import Game
@@ -165,6 +168,39 @@ class TkApp:
 
         self.btn_restart = tk.Button(self.header_frame, text="Restart level")
         self.btn_restart.grid(row=2, column=2, sticky="news", padx=5, pady=5)
+
+class Data:
+    def __init__(self):
+        self.music = ""
+        self.title = ""
+        self.parallax = []
+        self.images = []
+
+    def load_data(self, lvl_path: str, global_path: str="game/global/"):
+        with zip.ZipFile(lvl_path, 'r') as lvl:
+
+            with lvl.open('header.json') as header:
+                lvl_data = json.load(header)
+
+            for f_name in lvl.namelist():
+                if f_name.endswith(('.png','.jpg')):
+
+                    img_data = lvl.read(f_name)
+                    img_stream = io.BytesIO(img_data)
+                    self.images.append(pg.image.load(img_stream).convert_alpha())
+
+        #temporary way as we haven't set a global yet
+        if global_path != "game/global/":
+            for file in os.listdir(global_path):
+
+                if file.endswith('.json'):
+                    with open(os.path.join(global_path, file), 'r') as g_header:
+                        global_data = json.load(g_header)
+
+                elif file.endswith(('.png','.jpg')):
+
+                    self.images.append(pg.image.load(os.path.join(global_path, file)).convert_alpha())
+
 
 if __name__ == "__main__":
     app = PgApp()
