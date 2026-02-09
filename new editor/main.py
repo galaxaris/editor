@@ -6,6 +6,7 @@ import io
 import os
 
 from api.Game import Game
+from api.GameObject import GameObject
 
 class PgApp:
     def __init__(self):
@@ -33,6 +34,10 @@ class PgApp:
         self.game = Game(real_w, real_h, WIDTH, HEIGHT,"Editor", pg.SCALED | pg.NOFRAME, self.FPS)
 
         self.game.bind(pg.MOUSEMOTION, self.update_camera_pos)
+        self.grid = GameObject(0, 0, self.RES[0], self.RES[1])
+
+        self.fps_counter = GameObject(0, 0, 640, 360)
+
         self.game.run(self.loop)
 
     def update_camera_pos(self, event: pg.event.Event):
@@ -43,10 +48,13 @@ class PgApp:
     def loop(self, master):
         self.control_panel.update()
 
-        master.screen.blit(self.render_grid(), (0,0))
+        master.screen.set_layer(0, "grille")
+        self.grid.set_surface(self.render_grid())
+        master.screen.add(self.grid, "grille")
 
-        fps_count = self.font.render(f"FPS : {int(master.clock.get_fps())}", False, (200,200,200,150)).convert_alpha()
-        master.screen.blit(fps_count, (0,0))
+        self.fps_counter.set_surface(
+            self.font.render(f"FPS : {int(master.clock.get_fps())}", False, (200, 200, 200, 150)).convert_alpha())
+        master.screen.add(self.fps_counter)
 
     def render_grid(self):
         grid = pg.Surface(self.RES, pg.SRCALPHA)
