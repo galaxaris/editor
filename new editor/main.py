@@ -23,20 +23,19 @@ class PgApp:
         real_h = self.control_panel.game_frame.winfo_height()
 
         pg.init()
-        self.RES = (640, 360)
-        WIDTH, HEIGHT = self.RES
-        self.scale_ratio = self.RES[0]/real_w
+        self.RES = pg.Vector2(640, 360)
+        self.scale_ratio = self.RES.x/real_w
         self.FPS = 60
         self.font = pg.font.Font("fonts/FRm6x11.ttf", 16) #this font is a modified version of this one https://managore.itch.io/m6x11, it now handles French accents thanks to me, axel.
 
         self.cam_offset = pg.Vector2(0, 0)
 
-        self.game = Game(real_w, real_h, WIDTH, HEIGHT,"Editor", pg.SCALED | pg.NOFRAME, self.FPS)
+        self.game = Game((1920, 1080),"Editor", pg.NOFRAME, self.FPS, self.RES)
 
         self.game.bind(pg.MOUSEMOTION, self.update_camera_pos)
-        self.grid = GameObject(0, 0, self.RES[0], self.RES[1])
+        self.grid = GameObject((0, 0), self.RES)
 
-        self.fps_counter = GameObject(0, 0, 640, 360)
+        self.fps_counter = GameObject((0, 0), (640, 360))
 
         self.game.run(self.loop)
 
@@ -52,8 +51,7 @@ class PgApp:
         self.grid.set_surface(self.render_grid())
         master.screen.add(self.grid, "grille")
 
-        self.fps_counter.set_surface(
-            self.font.render(f"FPS : {int(master.clock.get_fps())}", False, (200, 200, 200, 150)).convert_alpha())
+        self.fps_counter.set_surface(self.font.render(f"FPS : {int(master.clock.get_fps())}", False, (200, 200, 200, 150)).convert_alpha())
         master.screen.add(self.fps_counter)
 
     def render_grid(self):
@@ -62,10 +60,10 @@ class PgApp:
         offset = pg.Vector2(self.cam_offset.x % 32, self.cam_offset.y % 32)
 
         for i in range(21):
-            pg.draw.line(grid, (200, 200, 200, 50), (32 * i, 0) - offset, (32 * i, self.RES[1] + 32) - offset, width=1)
+            pg.draw.line(grid, (200, 200, 200, 50), (32 * i, 0) - offset, (32 * i, self.RES.y + 32) - offset, width=1)
 
         for j in range(13):
-            pg.draw.line(grid, (200, 200, 200, 50), (0, 32 * j) - offset, (self.RES[0] + 32, 32 * j) - offset, width=1)
+            pg.draw.line(grid, (200, 200, 200, 50), (0, 32 * j) - offset, (self.RES.x + 32, 32 * j) - offset, width=1)
         return grid
 
 class TkApp:
