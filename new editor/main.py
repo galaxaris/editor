@@ -30,7 +30,7 @@ class PgApp:
 
         self.cam_offset = pg.Vector2(0, 0)
 
-        self.game = Game((1920, 1080),"Editor", pg.NOFRAME, self.FPS, self.RES)
+        self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
 
         self.game.bind(pg.MOUSEMOTION, self.update_camera_pos)
         self.grid = GameObject((0, 0), self.RES)
