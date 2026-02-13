@@ -44,15 +44,15 @@ class PgApp:
             delta = pg.Vector2(event.rel)
             self.cam_offset -= delta * self.scale_ratio
 
-    def loop(self, master):
+    def loop(self):
         self.control_panel.update()
 
-        master.screen.set_layer(0, "grille")
+        self.game.screen.set_layer(0, "grille")
         self.grid.set_surface(self.render_grid())
-        master.screen.add(self.grid, "grille")
+        self.game.screen.add(self.grid, "grille")
 
-        self.fps_counter.set_surface(self.font.render(f"FPS : {int(master.clock.get_fps())}", False, (200, 200, 200, 150)).convert_alpha())
-        master.screen.add(self.fps_counter)
+        self.fps_counter.set_surface(self.font.render(f"FPS : {int(self.game.clock.get_fps())}", False, (200, 200, 200, 150)).convert_alpha())
+        self.game.screen.add(self.fps_counter)
 
     def render_grid(self):
         grid = pg.Surface(self.RES, pg.SRCALPHA)
