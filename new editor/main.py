@@ -22,15 +22,16 @@ class PgApp:
         real_w = self.control_panel.game_frame.winfo_width()
         real_h = self.control_panel.game_frame.winfo_height()
 
-        pg.init()
         self.RES = pg.Vector2(640, 360)
-        self.scale_ratio = self.RES.x/real_w
         self.FPS = 60
+
+        self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
+
+        self.scale_ratio = self.RES.x/real_w
+
         self.font = pg.font.Font("fonts/FRm6x11.ttf", 16) #this font is a modified version of this one https://managore.itch.io/m6x11, it now handles French accents thanks to me, axel.
 
         self.cam_offset = pg.Vector2(0, 0)
-
-        self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
 
         self.game.bind(pg.MOUSEMOTION, self.update_camera_pos)
         self.grid = GameObject((0, 0), self.RES)
