@@ -1,6 +1,6 @@
 import tkinter as tk
-
 from editor.tkinter.UIGeneration import generate_ui
+from editor.tkinter.TtkCss import apply_ttk_style
 
 class TkApp:
     def __init__(self, master):
@@ -14,8 +14,11 @@ class TkApp:
         screen_w = self.root.winfo_screenwidth()
         screen_h = self.root.winfo_screenheight()
 
+        apply_ttk_style()
+
         self.root.geometry(f"{screen_w}x{screen_h}+0+0")
 
+        self.obj_editing = False
         generate_ui(self)
 
     def exit_editor(self):
