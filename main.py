@@ -30,7 +30,7 @@ class PgApp:
 
         self.scale_ratio = self.RES.x/real_w
 
-        self.font = pg.font.Font("fonts/FRm6x11.ttf", 16) #this font is a modified version of this one https://managore.itch.io/m6x11, it now handles French accents thanks to me, axel.
+        self.font = pg.font.Font("assets/fonts/FRm6x11.ttf", 16) #this font is a modified version of this one https://managore.itch.io/m6x11, it now handles French accents thanks to me, axel.
 
         self.cam_offset = pg.Vector2(0, 0)
 

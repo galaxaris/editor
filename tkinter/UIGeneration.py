@@ -11,7 +11,8 @@ def generate_ui(self):
 
     self.root.grid_rowconfigure(0, minsize=game_frame_w*9/16*2/8, weight=0)
     self.root.grid_rowconfigure(1, minsize=game_frame_w*9/16*6/8, weight=0)
-    self.root.grid_rowconfigure((2,3), weight=1)
+    self.root.grid_rowconfigure(2, weight=1)
+    self.root.grid_rowconfigure(3, weight=3)
 
     self.game_frame = ttk.Frame(self.root)
     self.game_frame.grid(row=0, column=1, rowspan=2, sticky="news")
@@ -138,11 +139,14 @@ def generate_header_frame_ui(self):
     self.btn_save = ttk.Button(self.header_frame, text="Save the\nlevel")
     self.btn_save.grid(row=1, column=3, sticky="news", padx=(5, 10), pady=5)
 
-    self.btn_play = ttk.Button(self.header_frame, text="Play\nlevel")
+    self.play_icon = tk.PhotoImage(file="assets\\icons\\play.png")
+    self.btn_play = ttk.Button(self.header_frame, image=self.play_icon, style="Image.TButton")
     self.btn_play.grid(row=2, column=0, sticky="news", padx=(10, 5), pady=(5, 10))
 
-    self.btn_pause = ttk.Button(self.header_frame, text="Pause\nlevel")
+    self.pause_icon = tk.PhotoImage(file="assets\\icons\\pause.png")
+    self.btn_pause = ttk.Button(self.header_frame, image=self.pause_icon, style="Image.TButton")
     self.btn_pause.grid(row=2, column=1, sticky="news", padx=5, pady=(5, 10))
 
-    self.btn_restart = ttk.Button(self.header_frame, text="Restart\nlevel")
+    self.replay_icon = tk.PhotoImage(file="assets\\icons\\replay.png")
+    self.btn_restart = ttk.Button(self.header_frame, image=self.replay_icon, style="Image.TButton")
     self.btn_restart.grid(row=2, column=2, sticky="news", padx=5, pady=(5, 10))
