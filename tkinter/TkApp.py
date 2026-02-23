@@ -12,11 +12,10 @@ class TkApp:
         self.root.protocol("WM_DELETE_WINDOW", self.exit_editor)
 
         screen_w = self.root.winfo_screenwidth()
-        screen_h = self.root.winfo_screenheight()
 
         apply_ttk_style()
 
-        self.root.geometry(f"{screen_w}x{screen_h}+0+0")
+        self.root.geometry(f"{screen_w}x{int(screen_w*9/16)}+0+0")
 
         self.obj_editing = False
         generate_ui(self)
