@@ -8,14 +8,13 @@ class TkApp:
         self.root = tk.Tk()
         self.root.title("Galaxaris editor")
         self.root.state('zoomed')
+        self.root.resizable(False, False)
 
         self.root.protocol("WM_DELETE_WINDOW", self.exit_editor)
 
         screen_w = self.root.winfo_screenwidth()
 
         apply_ttk_style()
-
-        self.root.geometry(f"{screen_w}x{int(screen_w*9/16)}+0+0")
 
         self.obj_editing = False
         generate_ui(self)

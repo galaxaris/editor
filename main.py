@@ -8,6 +8,10 @@ from editor.tkinter.TkApp import TkApp
 
 from api.Game import Game
 from api.GameObject import GameObject
+from api.entity.Player import Player
+from api.environment.Parallax import ParallaxBackground, ParallaxLayer
+from api.assets.Texture import Texture
+from api.assets.Resource import Resource, ResourceType
 
 class PgApp:
     def __init__(self):
@@ -21,45 +25,46 @@ class PgApp:
 
         self.control_panel.root.update()
         real_w = self.control_panel.game_frame.winfo_width()
-        real_h = self.control_panel.game_frame.winfo_height()
 
         self.RES = pg.Vector2(640, 360)
         self.FPS = 60
 
+        self.scale_ratio = self.RES.x / real_w
+
         self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
 
-        self.scale_ratio = self.RES.x/real_w
+        self.setup_api()
 
-        self.font = pg.font.Font("assets/fonts/FRm6x11.ttf", 16) #this font is a modified version of this one https://managore.itch.io/m6x11, it now handles French accents thanks to me, axel.
-
-        self.cam_offset = pg.Vector2(0, 0)
-
-        self.game.bind(pg.MOUSEMOTION, self.update_camera_pos)
-        self.grid = GameObject((0, 0), self.RES)
-
-        self.fps_counter = GameObject((0, 0), (640, 360))
+        self.control_panel.game_frame.bind("<Button-1>", lambda event: self.control_panel.game_frame.focus_set())
 
         self.game.run(self.loop)
 
-    def update_camera_pos(self, event: pg.event.Event):
-        if pg.mouse.get_pressed()[2]:
-            delta = pg.Vector2(event.rel)
-            self.cam_offset -= delta * self.scale_ratio
+    def setup_api(self):
+        glob = Resource(ResourceType.GLOBAL, "assets")
+
+        #self.cam = Player((0, 0), (1, 1))
+        #self.cam.set_gravity(0.0)
+
+        #self.game.screen.camera.set_offset((self.RES.x // 2 - self.cam.size.x, self.RES.y // 2 - self.cam.size.y))
+
+        grid = Texture("grid.png", glob)
+        self.p_bg = ParallaxBackground(self.RES, [ParallaxLayer(pg.Vector2(1, 1), grid)], (0, 0, 0))
 
     def loop(self):
         self.control_panel.update()
 
-        self.game.screen.set_layer(0, "grille")
-        self.grid.set_surface(self.render_grid())
-        self.game.screen.add(self.grid, "grille")
+        #self.game.register_debug_entity(self.cam)
 
-        self.fps_counter.set_surface(self.font.render(f"FPS : {int(self.game.clock.get_fps())}", False, (200, 200, 200, 150)).convert_alpha())
-        self.game.screen.add(self.fps_counter)
+        #self.game.screen.set_layer(1, "#cam")
+
+        #self.game.screen.add(self.cam, "#player")
+        self.game.screen.set_background(self.p_bg)
+        #self.game.screen.camera.focus(self.cam)
 
     def render_grid(self):
         grid = pg.Surface(self.RES, pg.SRCALPHA)
 
-        offset = pg.Vector2(self.cam_offset.x % 32, self.cam_offset.y % 32)
+        offset = pg.Vector2(0 % 32, 0 % 32)
 
         for i in range(21):
             pg.draw.line(grid, (200, 200, 200, 50), (32 * i, 0) - offset, (32 * i, self.RES.y + 32) - offset, width=1)
