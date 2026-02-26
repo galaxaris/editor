@@ -23,55 +23,27 @@ class PgApp:
         os.environ['SDL_WINDOWID'] = str(embed_id)
         os.environ['SDL_VIDEODRIVER'] = 'windib'
 
-        self.control_panel.root.update()
-        real_w = self.control_panel.game_frame.winfo_width()
-
         self.RES = pg.Vector2(640, 360)
         self.FPS = 60
-
-        self.scale_ratio = self.RES.x / real_w
 
         self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
 
         self.setup_api()
 
-        self.control_panel.game_frame.bind("<Button-1>", lambda event: self.control_panel.game_frame.focus_set())
+        self.control_panel.game_frame.bind("<Button-1>", lambda event: self.control_panel.game_frame.focus_set()) #try to redirect inputs to pg
 
         self.game.run(self.loop)
 
     def setup_api(self):
         glob = Resource(ResourceType.GLOBAL, "assets")
 
-        #self.cam = Player((0, 0), (1, 1))
-        #self.cam.set_gravity(0.0)
-
-        #self.game.scene.camera.set_offset((self.RES.x // 2 - self.cam.size.x, self.RES.y // 2 - self.cam.size.y))
-
-        grid = Texture("grid.png", glob)
+        grid = Texture("grid.png", glob) #draw the grid via a parallax layer :)
         self.p_bg = ParallaxBackground(self.RES, [ParallaxLayer(pg.Vector2(1, 1), grid)], (0, 0, 0))
 
     def loop(self):
         self.control_panel.update()
 
-        #self.game.register_debug_entity(self.cam)
-
-        #self.game.scene.set_layer(1, "#cam")
-
-        #self.game.scene.add(self.cam, "#player")
         self.game.scene.set_background(self.p_bg)
-        #self.game.scene.camera.focus(self.cam)
-
-    def render_grid(self):
-        grid = pg.Surface(self.RES, pg.SRCALPHA)
-
-        offset = pg.Vector2(0 % 32, 0 % 32)
-
-        for i in range(21):
-            pg.draw.line(grid, (200, 200, 200, 50), (32 * i, 0) - offset, (32 * i, self.RES.y + 32) - offset, width=1)
-
-        for j in range(13):
-            pg.draw.line(grid, (200, 200, 200, 50), (0, 32 * j) - offset, (self.RES.x + 32, 32 * j) - offset, width=1)
-        return grid
 
 class Data:
     def __init__(self):

@@ -24,3 +24,4 @@ def apply_ttk_style():
     style.configure("TEntry", fieldbackground=bg_color, foreground="white",focuscolor="none",focusthickness=0)
 
     style.configure("TCombobox", fieldbackground=bg_color, foreground="white", background="#3a3a3a",focuscolor="none",focusthickness=0)
+    style.map("TCombobox",fieldbackground=[("readonly", bg_color)], foreground=[("readonly", "white")],selectbackground=[("readonly", bg_color)])
