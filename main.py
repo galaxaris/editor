@@ -45,7 +45,7 @@ class PgApp:
         #self.cam = Player((0, 0), (1, 1))
         #self.cam.set_gravity(0.0)
 
-        #self.game.screen.camera.set_offset((self.RES.x // 2 - self.cam.size.x, self.RES.y // 2 - self.cam.size.y))
+        #self.game.scene.camera.set_offset((self.RES.x // 2 - self.cam.size.x, self.RES.y // 2 - self.cam.size.y))
 
         grid = Texture("grid.png", glob)
         self.p_bg = ParallaxBackground(self.RES, [ParallaxLayer(pg.Vector2(1, 1), grid)], (0, 0, 0))
@@ -55,11 +55,11 @@ class PgApp:
 
         #self.game.register_debug_entity(self.cam)
 
-        #self.game.screen.set_layer(1, "#cam")
+        #self.game.scene.set_layer(1, "#cam")
 
-        #self.game.screen.add(self.cam, "#player")
-        self.game.screen.set_background(self.p_bg)
-        #self.game.screen.camera.focus(self.cam)
+        #self.game.scene.add(self.cam, "#player")
+        self.game.scene.set_background(self.p_bg)
+        #self.game.scene.camera.focus(self.cam)
 
     def render_grid(self):
         grid = pg.Surface(self.RES, pg.SRCALPHA)
