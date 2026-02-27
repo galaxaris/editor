@@ -22,6 +22,8 @@ class PgApp:
 
         os.environ['SDL_WINDOWID'] = str(embed_id)
         os.environ['SDL_VIDEODRIVER'] = 'windib'
+        os.environ["EDITOR"] = "1"
+
 
         self.RES = pg.Vector2(640, 360)
         self.FPS = 60
@@ -29,8 +31,6 @@ class PgApp:
         self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
 
         self.setup_api()
-
-        self.control_panel.game_frame.bind("<Button-1>", lambda event: self.control_panel.game_frame.focus_set()) #try to redirect inputs to pg
 
         self.game.run(self.loop)
 
