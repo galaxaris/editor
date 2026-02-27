@@ -16,25 +16,38 @@ class TkApp:
 
         self.root.title("Galaxaris editor")
         self.root.state('zoomed')
-        self.root.resizable(False, False) #very important to avoid crash from the pygame app that is embedded
+        self.root.resizable(False, False) #pygame app shouldn't be resized, it is good as it is
 
         self.menubar = tk.Menu(self.root)
         generate_mb(self)
         self.root.config(menu=self.menubar)
-        self.root.protocol("WM_DELETE_WINDOW", self.exit_editor) #the x button that close the tkinter window is redirected to kill the pg window
+        self.root.protocol("WM_DELETE_WINDOW", self.exit_editor) #the x button that close the tkinter window is redirected to also kill the pg window
 
         apply_ttk_style()
-
-        self.root.bind("<KeyPress>", self.handle_keydown)
-        self.root.bind("<KeyRelease>", self.handle_keyup)
 
         self.obj_editing = False
         self.key_map = self.generate_key_map()
         self.placeable_classes = get_placeable_classes()
 
         generate_ui(self)
-        self.game_frame.bind("<Enter>", lambda e: self.game_frame.focus_set()) #if the mouse is over the game frame, we give the game_frame the focus
-        self.game_frame.bind("<Leave>", lambda e: self.release_keys())
+        self.root.bind("<KeyPress>", self.handle_keydown)
+        self.root.bind("<KeyRelease>", self.handle_keyup)
+
+        self.game_frame.bind("<Enter>", self.bind_keys) #if the mouse is over the game frame, we give the game_frame the focus
+        self.game_frame.bind("<Leave>", self.unbind_keys)
+
+    def bind_keys(self, event):
+        self.root.bind("<KeyPress>", self.handle_keydown)
+        self.root.bind("<KeyRelease>", self.handle_keyup)
+
+    def unbind_keys(self, event):
+        self.release_keys()
+        self.root.unbind("<KeyPress>")
+        self.root.unbind("<KeyRelease>")
+
+    def release_keys(self):
+        print("oui")
+        Inputs.editor_release_key()
 
     def generate_key_map(self):
         mapping = {
@@ -79,6 +92,7 @@ class TkApp:
 
     def exit_editor(self) -> None:
         self.master.game.stop()
+        self.root.destroy()
 
     def get_game_frame_id(self) -> None:
         self.root.update()
@@ -86,7 +100,4 @@ class TkApp:
 
     def update(self) -> None:
         self.root.update()
-
-    def release_keys(self):
-        Inputs.editor_release_key()
 

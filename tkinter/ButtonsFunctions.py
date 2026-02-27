@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 from tkinter import ttk
 
 def new_object(self):
@@ -29,3 +30,14 @@ def generate_build_params(self, class_name):
     for param_name, param_val in self.placeable_classes[class_name]["params"].items():
         label_p = ttk.Label(self.sclbox_object_att, text=param_name, padding=10)
         label_p.pack(fill="x", padx=10, pady=5)
+
+def add_a_music(self):
+    filetypes = (('Audio files', '*.mp3 *.wav *.ogg'),('Any files', '*.*'))
+
+    filename = filedialog.askopenfilename(title='Select a music',initialdir='/',filetypes=filetypes)
+
+    if filename:
+        print(f"Musique sélectionnée : {filename}")
+        return filename
+
+    return None

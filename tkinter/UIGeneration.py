@@ -93,7 +93,7 @@ def generate_edit_object_frame(self):
     self.ntr_object_name.grid(row=2, column=1, sticky="news", padx=(5, 0), pady=5)
 
 def generate_actions_frame_ui(self):
-    self.actions_frame.grid_columnconfigure((0, 1, 2), weight=1)
+    self.actions_frame.grid_columnconfigure((0, 1), weight=1)
     self.actions_frame.grid_rowconfigure((0, 1), weight=1)
 
     self.btn_add_object = ttk.Button(self.actions_frame, text="Add an\nobject", command=lambda : new_object(self))
@@ -107,13 +107,6 @@ def generate_actions_frame_ui(self):
 
     self.btn_del_object = ttk.Button(self.actions_frame, text="Delete the\nobject")
     self.btn_del_object.grid(row=1, column=0, sticky="news", padx=(10,5), pady=(5,10))
-
-    self.btn_add_asset = ttk.Button(self.actions_frame, text="Add an\nasset")
-    self.btn_add_asset.grid(row=0, column=2, sticky="news", padx=10, pady=(10,5))
-
-    self.btn_del_asset = ttk.Button(self.actions_frame, text="Delete the\nasset")
-    self.btn_del_asset.grid(row=1, column=2, sticky="news", padx=10, pady=(5,10))
-
 
 def generate_header_frame_ui(self):
     self.header_frame.grid_columnconfigure((0, 1, 2), weight=1)

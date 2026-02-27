@@ -1,4 +1,5 @@
 import tkinter as tk
+from editor.tkinter.ButtonsFunctions import add_a_music
 
 def generate_mb(self):
     file_menu = tk.Menu(self.menubar, tearoff=0)
@@ -14,6 +15,6 @@ def generate_mb(self):
 
     env_menu.add_separator()
 
-    env_menu.add_command(label="Choose a music", command=lambda: print("m"))
+    env_menu.add_command(label="Choose a music", command=lambda: add_a_music(self))
 
     self.menubar.add_cascade(label="Environment", menu=env_menu)

@@ -3,7 +3,9 @@ import zipfile as zip
 import json
 import io
 import os
+import threading
 
+from api.utils import Debug
 from editor.tkinter.TkApp import TkApp
 
 from api.Game import Game
@@ -24,7 +26,6 @@ class PgApp:
         os.environ['SDL_VIDEODRIVER'] = 'windib'
         os.environ["EDITOR"] = "1"
 
-
         self.RES = pg.Vector2(640, 360)
         self.FPS = 60
 
@@ -32,18 +33,23 @@ class PgApp:
 
         self.setup_api()
 
+        self.game_thread = threading.Thread(target=self.run_game_api, daemon=True)
+        self.game_thread.start()
+
+        self.control_panel.root.mainloop()
+
+    def run_game_api(self):
         self.game.run(self.loop)
+
+    def loop(self):
+        self.game.scene.set_background(self.p_bg)
 
     def setup_api(self):
         glob = Resource(ResourceType.GLOBAL, "assets")
-
+        Debug.toggle("freecam")
+        self.game.enable_debug()
         grid = Texture("grid.png", glob) #draw the grid via a parallax layer :)
         self.p_bg = ParallaxBackground(self.RES, [ParallaxLayer(pg.Vector2(1, 1), grid)], (0, 0, 0))
-
-    def loop(self):
-        self.control_panel.update()
-
-        self.game.scene.set_background(self.p_bg)
 
 class Data:
     def __init__(self):
