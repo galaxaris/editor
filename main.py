@@ -1,88 +1,47 @@
-import pygame as pg
-import zipfile as zip
-import json
-import io
-import os
+import tkinter as tk
 import threading
 
-from api.utils import Debug
-from editor.tkinter.TkApp import TkApp
+from editor.tk_utils.UIGeneration import generate_ui
+from editor.tk_utils.TtkCss import apply_ttk_style
+from editor.tk_utils.MenuBarGeneration import generate_mb
+from editor.tk_utils.KeyRedirection import generate_key_map, handle_keydown, handle_keyup
+from editor.ReadApi import get_placeable_classes
+from editor.PgApp import PgApp
 
-from api.Game import Game
-from api.GameObject import GameObject
-from api.entity.Player import Player
-from api.environment.Parallax import ParallaxBackground, ParallaxLayer
-from api.assets.Texture import Texture
-from api.assets.Resource import Resource, ResourceType
 
-class PgApp:
+class TkApp:
     def __init__(self):
-        self.control_panel = TkApp(self)
+        self.root = tk.Tk()
 
-        #this part lets us run the pygame window in a frame in our tkinter window
-        embed_id = self.control_panel.get_game_frame_id()
+        self.root.title("Galaxaris editor")
+        self.root.state('zoomed')
+        self.root.resizable(False, False) #pygame app shouldn't be resized, it is good as it is
 
-        os.environ['SDL_WINDOWID'] = str(embed_id)
-        os.environ['SDL_VIDEODRIVER'] = 'windib'
-        os.environ["EDITOR"] = "1"
+        self.menubar = tk.Menu(self.root)
+        generate_mb(self)
+        self.root.config(menu=self.menubar)
+        self.root.protocol("WM_DELETE_WINDOW", self.exit_editor) #the x button that close the tkinter window is redirected to also kill the pg window
 
-        self.RES = pg.Vector2(640, 360)
-        self.FPS = 60
+        apply_ttk_style()
 
-        self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
+        self.obj_editing = False
+        self.key_map = generate_key_map()
+        self.placeable_classes = get_placeable_classes()
 
-        self.setup_api()
+        game_frame_id = generate_ui(self)
 
-        self.game_thread = threading.Thread(target=self.run_game_api, daemon=True)
+        self.pg_app = PgApp(game_frame_id)
+        #self.root.bind("<KeyPress>", lambda event: handle_keydown(self, event))
+        #self.root.bind("<KeyRelease>", lambda event: handle_keyup(self, event))
+
+        self.game_thread = threading.Thread(target=lambda: self.pg_app.game.run(self.pg_app.loop), daemon=True)
         self.game_thread.start()
+        self.root.mainloop()
 
-        self.control_panel.root.mainloop()
-
-    def run_game_api(self):
-        self.game.run(self.loop)
-
-    def loop(self):
-        self.game.scene.set_background(self.p_bg)
-
-    def setup_api(self):
-        glob = Resource(ResourceType.GLOBAL, "assets")
-        Debug.toggle("freecam")
-        self.game.enable_debug()
-        grid = Texture("grid.png", glob) #draw the grid via a parallax layer :)
-        self.p_bg = ParallaxBackground(self.RES, [ParallaxLayer(pg.Vector2(1, 1), grid)], (0, 0, 0))
-
-class Data:
-    def __init__(self):
-        self.music = ""
-        self.title = ""
-        self.parallax = []
-        self.images = []
-
-    def load_data(self, lvl_path: str, global_path: str="game/global/"):
-        with zip.ZipFile(lvl_path, 'r') as lvl:
-
-            with lvl.open('header.json') as header:
-                lvl_data = json.load(header)
-
-            for f_name in lvl.namelist():
-                if f_name.endswith(('.png','.jpg')):
-
-                    img_data = lvl.read(f_name)
-                    img_stream = io.BytesIO(img_data)
-                    self.images.append(pg.image.load(img_stream).convert_alpha())
-
-        #temporary way as we haven't set a global yet
-        if global_path != "game/global/":
-            for file in os.listdir(global_path):
-
-                if file.endswith('.json'):
-                    with open(os.path.join(global_path, file), 'r') as g_header:
-                        global_data = json.load(g_header)
-
-                elif file.endswith(('.png','.jpg')):
-
-                    self.images.append(pg.image.load(os.path.join(global_path, file)).convert_alpha())
-
+    def exit_editor(self) -> None:
+        self.pg_app.game.stop()
+        self.game_thread.join() #just in case I guess
+        self.root.destroy()
 
 if __name__ == "__main__":
-    app = PgApp()
+    app = TkApp()

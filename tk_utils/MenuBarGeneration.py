@@ -1,5 +1,5 @@
 import tkinter as tk
-from editor.tkinter.ButtonsFunctions import add_a_music
+from editor.tk_utils.ButtonsFunctions import add_a_music
 
 def generate_mb(self):
     file_menu = tk.Menu(self.menubar, tearoff=0)

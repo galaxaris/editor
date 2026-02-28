@@ -1,9 +1,9 @@
 import tkinter as tk
-from tkinter import ttk
 
-from editor.tkinter.ButtonsFunctions import *
+from editor.tk_utils.ButtonsFunctions import *
+from editor.tk_utils.KeyRedirection import bind_keys, unbind_keys
 
-def generate_ui(self):
+def generate_ui(self) -> int:
     self.root.grid_columnconfigure(0, weight=1, uniform="col")
     self.root.grid_columnconfigure(1, weight=4, uniform="col")
 
@@ -16,6 +16,8 @@ def generate_ui(self):
 
     self.game_frame = ttk.Frame(self.root)
     self.game_frame.grid(row=0, column=1, rowspan=2, sticky="news")
+    self.game_frame.bind("<Enter>", lambda event: bind_keys(self, event))
+    self.game_frame.bind("<Leave>", lambda event: unbind_keys(self, event))
 
     self.header_frame = ttk.Frame(self.root)
     self.header_frame.grid(row=0, column=0, sticky="news")
@@ -39,7 +41,10 @@ def generate_ui(self):
     self.assets_frame = ttk.Frame(self.root)
     self.assets_frame.grid(row=2, column=1, rowspan=2, sticky="news")
 
-def create_scrollbox(self):
+    self.root.update()
+    return self.game_frame.winfo_id()
+
+def create_scrollbox(self) -> None:
     canvas = tk.Canvas(self.edit_object_frame, highlightthickness=0, background="black")
     canvas.grid(row=3, column=0, columnspan=2, sticky="news", padx=(2, 0))
 
@@ -59,7 +64,7 @@ def create_scrollbox(self):
     canvas.bind("<Enter>", lambda _: canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")))
     canvas.bind("<Leave>", lambda _: canvas.unbind_all("<MouseWheel>"))
 
-def generate_edit_object_frame(self):
+def generate_edit_object_frame(self) -> None:
     self.edit_object_frame.grid_columnconfigure((0, 1), weight=1)
     self.edit_object_frame.grid_columnconfigure(2, weight=0)
 
@@ -92,7 +97,7 @@ def generate_edit_object_frame(self):
     self.ntr_object_name = ttk.Entry(self.edit_object_frame)
     self.ntr_object_name.grid(row=2, column=1, sticky="news", padx=(5, 0), pady=5)
 
-def generate_actions_frame_ui(self):
+def generate_actions_frame_ui(self) -> None:
     self.actions_frame.grid_columnconfigure((0, 1), weight=1)
     self.actions_frame.grid_rowconfigure((0, 1), weight=1)
 
@@ -108,7 +113,7 @@ def generate_actions_frame_ui(self):
     self.btn_del_object = ttk.Button(self.actions_frame, text="Delete the\nobject")
     self.btn_del_object.grid(row=1, column=0, sticky="news", padx=(10,5), pady=(5,10))
 
-def generate_header_frame_ui(self):
+def generate_header_frame_ui(self) -> None:
     self.header_frame.grid_columnconfigure((0, 1, 2), weight=1)
 
     self.header_frame.grid_rowconfigure(0, weight=0)
