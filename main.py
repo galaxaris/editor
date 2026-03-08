@@ -5,8 +5,10 @@ from editor.tk_utils.UIGeneration import generate_ui
 from editor.tk_utils.TtkCss import apply_ttk_style
 from editor.tk_utils.MenuBarGeneration import generate_mb
 from editor.tk_utils.KeyRedirection import generate_key_map, handle_keydown, handle_keyup
-from editor.ReadApi import get_placeable_classes
+from editor.ReadApiGa import get_placeable
 from editor.PgApp import PgApp
+
+from api.utils.ResourcePath import resource_path
 
 
 class TkApp:
@@ -26,7 +28,10 @@ class TkApp:
 
         self.obj_editing = False
         self.key_map = generate_key_map()
-        self.placeable_classes = get_placeable_classes()
+        self.placeable_classes = get_placeable("class")
+        self.placeable_func = get_placeable("func")
+        print(self.placeable_classes)
+        print(self.placeable_func)
 
         game_frame_id = generate_ui(self)
 
