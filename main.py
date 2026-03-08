@@ -1,5 +1,26 @@
+"""
+=== Omicronde Project Editor - Galaxaris ===
+
+This is the entry point of the Omicronde Editor. Built using tkinter & the Omicronde API.
+
+Authors: Galaxaris & Associates
+
+v.Beta (in development)
+- 06/03/2026
+
+Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
+
+"""
+
+#### RUN THE EDITOR WITH "python -m editor.main" FROM THE ROOT DIRECTORY OF THE PROJECT ####
+
+import os
 import tkinter as tk
 import threading
+
+#### CHANGE WORK DIRECTORY TO THE EDITOR FOLDER ####
+#=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 from editor.tk_utils.UIGeneration import generate_ui
 from editor.tk_utils.TtkCss import apply_ttk_style
@@ -10,6 +31,8 @@ from editor.PgApp import PgApp
 
 from api.utils.ResourcePath import resource_path
 
+
+    
 
 class TkApp:
     def __init__(self):
