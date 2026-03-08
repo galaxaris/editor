@@ -4,8 +4,6 @@ from os.path import join
 from editor.tk_utils.ButtonsFunctions import *
 from editor.tk_utils.KeyRedirection import bind_keys, unbind_keys
 
-from api.utils.ResourcePath import resource_path
-
 def generate_ui(self) -> int:
     self.root.grid_columnconfigure(0, weight=1, uniform="col")
     self.root.grid_columnconfigure(1, weight=4, uniform="col")
@@ -126,15 +124,14 @@ def generate_header_frame_ui(self) -> None:
     self.ntr_level_title = ttk.Entry(self.header_frame)
     self.ntr_level_title.grid(row=0, column=0, columnspan=4, sticky="news", padx=10, pady=(10, 5))
 
-    assets_path = resource_path("assets")
-    self.play_icon = tk.PhotoImage(file=join(assets_path, "icons", "play.png"))
+    self.play_icon = tk.PhotoImage(file=join(self.assets_path, "icons", "play.png"))
     self.btn_play = ttk.Button(self.header_frame, image=self.play_icon, style="Image.TButton")
     self.btn_play.grid(row=1, column=0, sticky="news", padx=(10, 5), pady=(5, 10))
 
-    self.pause_icon = tk.PhotoImage(file=join(assets_path, "icons", "pause.png"))
+    self.pause_icon = tk.PhotoImage(file=join(self.assets_path, "icons", "pause.png"))
     self.btn_pause = ttk.Button(self.header_frame, image=self.pause_icon, style="Image.TButton")
     self.btn_pause.grid(row=1, column=1, sticky="news", padx=5, pady=(5, 10))
 
-    self.replay_icon = tk.PhotoImage(file=join(assets_path, "icons", "replay.png"))
+    self.replay_icon = tk.PhotoImage(file=join(self.assets_path, "icons", "replay.png"))
     self.btn_restart = ttk.Button(self.header_frame, image=self.replay_icon, style="Image.TButton")
     self.btn_restart.grid(row=1, column=2, sticky="news", padx=5, pady=(5, 10))

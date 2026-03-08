@@ -31,9 +31,6 @@ from editor.PgApp import PgApp
 
 from api.utils.ResourcePath import resource_path
 
-
-    
-
 class TkApp:
     def __init__(self):
         self.root = tk.Tk()
@@ -49,6 +46,7 @@ class TkApp:
 
         apply_ttk_style()
 
+        self.assets_path = resource_path("assets")
         self.obj_editing = False
         self.key_map = generate_key_map()
         self.placeable_classes = get_placeable("class")
@@ -58,7 +56,7 @@ class TkApp:
 
         game_frame_id = generate_ui(self)
 
-        self.pg_app = PgApp(game_frame_id)
+        self.pg_app = PgApp(game_frame_id, self.assets_path)
         #self.root.bind("<KeyPress>", lambda event: handle_keydown(self, event))
         #self.root.bind("<KeyRelease>", lambda event: handle_keyup(self, event))
 
