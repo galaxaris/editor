@@ -58,7 +58,7 @@ def get_params(obj, type_: str) -> dict:
     params = {}
 
     for p_name, p_obj in init_sig.parameters.items():
-        if type_ == "class" and p_name in ('self', 'args', 'kwargs'):
+        if type_ == "class" and p_name in ('self', 'args', 'kwargs', 'pos'):
             continue
 
         p_type = p_obj.annotation.__name__ if hasattr(p_obj.annotation, '__name__') else str(p_obj.annotation)

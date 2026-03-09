@@ -52,7 +52,6 @@ class TkApp:
         self.placeable_classes = get_placeable("class")
         self.placeable_func = get_placeable("func")
         print(self.placeable_classes)
-        print(self.placeable_func)
 
         game_frame_id = generate_ui(self)
 
