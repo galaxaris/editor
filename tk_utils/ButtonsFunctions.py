@@ -23,7 +23,7 @@ def raise_obj_frame(self):
     else:
         self.object_frame.tkraise()
 
-def numerize(content:str, type_: str):
+def numerize(content:str, type_: str, cursor_pos: int):
     try:
         if content == "-": #with only a single - a casting wouldn't work
             pass
@@ -31,23 +31,25 @@ def numerize(content:str, type_: str):
             a = int(content)
         else:
             a = float(content)
+        return content
     except:
-        content = content[0:-1]
-
-    return content
+        return content[:cursor_pos] + content[cursor_pos+1:]
 
 def only_numbers(event, type_: str):
     w = event.widget
     content = w.get()
-    new_content = numerize(content, type_)
+    cursor_pos = w.index(tk.INSERT)-1 #needs the -1 to remove the right letter and to stay in place in that case
+    new_content = numerize(content, type_, cursor_pos)
 
     if content != new_content:
         w.delete(0, tk.END)
-        w.insert(0, content)
+        w.insert(0, new_content)
+        w.icursor(cursor_pos)
 
 def vectorise(event, count:int=1):
     w = event.widget
     content = w.get()
+    cursor_pos = w.index(tk.INSERT)-1
 
     if content == "":
         w.config(validate="none") #lets us put ourselves the "," because the forbid_comma is very strong
@@ -56,16 +58,18 @@ def vectorise(event, count:int=1):
 
     else:
         values = content.split(",")
-        new_content = numerize(values[0], type_="float")
-        for i in range(1,len(values)):
-            content += ","+numerize(values[i], type_="float")
+        new_content = ""
+        content_len = 0
+        for i in range(0,len(values)-1):
+            new_content += numerize(values[i], "float", cursor_pos - content_len)+","
+            content_len = len(values[i])
+        new_content += numerize(values[len(values)-1], "float", cursor_pos - content_len)
 
         w.config(validate="none")  # lets us put ourselves the "," because the forbid_comma is very strong
         w.delete(0, tk.END)
         w.insert(0, new_content)
         w.config(validate="key")
-
-
+        w.icursor(cursor_pos)
 
 def forbid_comma(char):
     if char == ",":
@@ -78,9 +82,8 @@ def generate_build_params(self, class_name):
 
     row = 0
     for param_name, param in self.placeable_classes[class_name]["params"].items():
-        label_p = ttk.Label(self.sclbox_object_att, text=param_name, padding=10)
+        label_p = ttk.Label(self.sclbox_object_att, text=f"{param_name} ({param["type"]})", padding=10)
         label_p.grid(row=row, column=0, padx=5, pady=5, sticky="news")
-        print(param["type"])
         match param["type"]:
             case "int" | "float":
                 entry_p = ttk.Entry(self.sclbox_object_att)
@@ -93,16 +96,24 @@ def generate_build_params(self, class_name):
                 entry_p.grid(row=row, column=1, padx=5, sticky="ew")
 
             case "Vector2" | "tuple":
-                entry_p = ttk.Entry(self.sclbox_object_att, validatecommand=(self.root.register(forbid_comma), "%S"))
-                entry_p.grid(row=row, column=1, padx=5, sticky="ew")
-                entry_p.insert(0, ",")
-                entry_p.config(validate="key") #activates the blocus on the ","
+                tuple_frame = ttk.Frame(self.sclbox_object_att, style="Noborder.TFrame")
+                tuple_frame.grid(row=row, column=1, sticky="news")
+                tuple_frame.columnconfigure((0,1), weight=1)
+                tuple_frame.rowconfigure(0, weight=1)
 
-                entry_p.bind("<KeyRelease>", vectorise)
+                entry_p = ttk.Entry(tuple_frame)
+                entry_p.grid(row=0, column=0, padx=5, sticky="ew")
+
+                entry_p.bind("<KeyRelease>", lambda event, type_=param["type"]: only_numbers(event, type_))
+
+                entry_p = ttk.Entry(tuple_frame)
+                entry_p.grid(row=0, column=1, padx=5, sticky="ew")
+
+                entry_p.bind("<KeyRelease>", lambda event, type_=param["type"]: only_numbers(event, type_))
 
         row += 1
 
-    self.sclbox_object_att.grid_columnconfigure((0,1), weight=1)
+    self.sclbox_object_att.grid_columnconfigure((0,1), weight=1, uniform="col3")
     self.sclbox_object_att.grid_rowconfigure([i for i in range(row)], weight=1)
 
 def add_a_music(self):
