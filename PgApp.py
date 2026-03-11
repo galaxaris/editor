@@ -6,13 +6,14 @@ import os
 from os.path import join
 import threading
 
-from api.utils import Debug
+from api.utils import Debug, Fonts
 
 from api.Game import Game
 from api.environment.Parallax import ParallaxBackground, ParallaxLayer
 from api.assets.Texture import Texture
 from api.assets.Resource import Resource, ResourceType
-from api.utils import GlobalVariables
+from api.utils.Fonts import DEFAULT_FONT
+
 
 class PgApp:
     def __init__(self, embed_id, assets_path):
@@ -26,7 +27,7 @@ class PgApp:
         self.assets_path = assets_path
 
         self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
-        GlobalVariables.set_variable("default_font", self.font_G)
+        Fonts.DEFAULT_FONT = self.font_G
         self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS, debug_font=self.font_G)
 
         self.setup_api()
