@@ -58,10 +58,25 @@ class TkApp:
         self.pg_app = PgApp(game_frame_id, self.assets_path)
         #self.root.bind("<KeyPress>", lambda event: handle_keydown(self, event))
         #self.root.bind("<KeyRelease>", lambda event: handle_keyup(self, event))
+        self.root.bind("<F11>", self.maximize)
+        self.root.bind("<Control-F11>", self.toggle_fullscreen)
 
         self.game_thread = threading.Thread(target=lambda: self.pg_app.game.run(self.pg_app.loop), daemon=True)
         self.game_thread.start()
         self.root.mainloop()
+
+    def maximize(self, event):
+        window = event.widget.winfo_toplevel()
+
+        if window.state() == 'zoomed':
+            window.state('normal')
+        else:
+            window.state('zoomed')
+
+    def toggle_fullscreen(self, event):
+        is_fullscreen = event.widget.winfo_toplevel().attributes("-fullscreen")
+        event.widget.winfo_toplevel().attributes("-fullscreen", not is_fullscreen)
+        return "break"
 
     def exit_editor(self) -> None:
         self.pg_app.game.stop()

@@ -3,8 +3,6 @@ import sys
 import inspect
 import importlib
 
-from api.utils.ResourcePath import resource_path
-
 
 def get_placeable(type_: str):
     results = {}
@@ -49,28 +47,60 @@ def get_placeable(type_: str):
 
     return results
 
-def get_params(obj, type_: str) -> dict:
+def get_params(obj, type_: str) -> list:
     if type_ == "class":
         init_sig = inspect.signature(obj.__init__)
     else:
         init_sig = inspect.signature(obj)
 
-    params = {}
+    params = []
 
     for p_name, p_obj in init_sig.parameters.items():
         if type_ == "class" and p_name in ('self', 'args', 'kwargs', 'pos'):
             continue
 
-        p_type = p_obj.annotation.__name__ if hasattr(p_obj.annotation, '__name__') else str(p_obj.annotation)
-
         if p_obj.annotation is inspect.Parameter.empty:
             p_type = "Any"
 
+        else:
+            p_type = str(p_obj.annotation).replace("class", "").strip("<").strip(">").strip().strip("'")
+
         p_default = p_obj.default if p_obj.default is not inspect.Parameter.empty else "&ToFill"
 
-        params[p_name] = {
-            "type": p_type,
-            "default": p_default
-        }
+        params.append(Param(p_name, p_type, p_default))
 
     return params
+
+class Param:
+    def __init__(self, name: str, type_: str, default_val: str = "#ToFill"):
+        self.name = name
+        self.type_ = type_
+        self.default_val = default_val
+        self.val = None
+        self.many_types = []
+        self.analyse_type()
+
+    def analyse_type(self):
+        types = self.type_.strip().split("|")
+        self.type_ = types[0]
+
+        for type_ in types:
+            if any(word in type_ for word in ["tuple", "list"]):
+
+                type_name, separator, after = type_.partition("[")
+
+                if separator:
+                    intern_type, separator, _ = after.partition("]")
+
+                else:
+                    intern_type = type_
+
+                values = intern_type.split(",")
+                self.many_types.append({"val": values, "count": len(values)})
+
+            elif type_ == "pygame.Vector2":
+                self.many_types.append({"val":("float", "float"), "count":2})
+
+            else:
+                print("TYPE", self.type_)
+                self.many_types.append({"val": None, "count": 0})

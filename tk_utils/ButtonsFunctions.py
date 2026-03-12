@@ -46,70 +46,43 @@ def only_numbers(event, type_: str):
         w.insert(0, new_content)
         w.icursor(cursor_pos)
 
-def vectorise(event, count:int=1):
-    w = event.widget
-    content = w.get()
-    cursor_pos = w.index(tk.INSERT)-1
-
-    if content == "":
-        w.config(validate="none") #lets us put ourselves the "," because the forbid_comma is very strong
-        w.insert(0, ","*count)
-        w.config(validate="key")
-
-    else:
-        values = content.split(",")
-        new_content = ""
-        content_len = 0
-        for i in range(0,len(values)-1):
-            new_content += numerize(values[i], "float", cursor_pos - content_len)+","
-            content_len = len(values[i])
-        new_content += numerize(values[len(values)-1], "float", cursor_pos - content_len)
-
-        w.config(validate="none")  # lets us put ourselves the "," because the forbid_comma is very strong
-        w.delete(0, tk.END)
-        w.insert(0, new_content)
-        w.config(validate="key")
-        w.icursor(cursor_pos)
-
-def forbid_comma(char):
-    if char == ",":
-        return False
-    return True
-
 def generate_build_params(self, class_name):
     for widget in self.sclbox_object_att.winfo_children():
         widget.destroy()
 
     row = 0
-    for param_name, param in self.placeable_classes[class_name]["params"].items():
-        label_p = ttk.Label(self.sclbox_object_att, text=f"{param_name} ({param["type"]})", padding=10)
+    for params in self.placeable_classes[class_name]["params"]:
+        label_p = ttk.Label(self.sclbox_object_att, text=f"{params.name}\n({params.type_})", padding=10)
         label_p.grid(row=row, column=0, padx=5, pady=5, sticky="news")
-        match param["type"]:
+
+        param = params.many_types[0]
+        match params.type_:
             case "int" | "float":
                 entry_p = ttk.Entry(self.sclbox_object_att)
                 entry_p.grid(row=row, column=1, padx=5, sticky="ew")
 
-                entry_p.bind("<KeyRelease>", lambda event,type_=param["type"]: only_numbers(event, type_))
+                entry_p.bind("<KeyRelease>", lambda event,type_=params.type_: only_numbers(event, type_))
 
             case "str":
                 entry_p = ttk.Entry(self.sclbox_object_att)
                 entry_p.grid(row=row, column=1, padx=5, sticky="ew")
 
-            case "Vector2" | "tuple":
+            case t if any(x in t for x in ['tuple', 'list', 'Vector2']):
                 tuple_frame = ttk.Frame(self.sclbox_object_att, style="Noborder.TFrame")
                 tuple_frame.grid(row=row, column=1, sticky="news")
-                tuple_frame.columnconfigure((0,1), weight=1)
+                range_ = [i for i in range(param["count"]+1)]
+                tuple_frame.columnconfigure(range_, weight=1)
                 tuple_frame.rowconfigure(0, weight=1)
 
-                entry_p = ttk.Entry(tuple_frame)
-                entry_p.grid(row=0, column=0, padx=5, sticky="ew")
+                for i in range(param["count"]):
+                    entry_p = ttk.Entry(tuple_frame)
+                    entry_p.grid(row=0, column=i, padx=5, sticky="ew")
 
-                entry_p.bind("<KeyRelease>", lambda event, type_=param["type"]: only_numbers(event, type_))
+                    entry_p.bind("<KeyRelease>", lambda event, type_=param["val"][0]: only_numbers(event, type_))
 
-                entry_p = ttk.Entry(tuple_frame)
-                entry_p.grid(row=0, column=1, padx=5, sticky="ew")
+            case _:
+                print("default",params.__dict__)
 
-                entry_p.bind("<KeyRelease>", lambda event, type_=param["type"]: only_numbers(event, type_))
 
         row += 1
 
