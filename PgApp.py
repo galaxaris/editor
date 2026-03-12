@@ -28,7 +28,8 @@ class PgApp:
 
         self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
         Fonts.DEFAULT_FONT = self.font_G
-        self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS, debug_font=self.font_G)
+        Debug.debug_font = self.font_G
+        self.game = Game((1920, 1080), self.RES, "Editor", pg.NOFRAME, self.FPS)
 
         self.setup_api()
 
