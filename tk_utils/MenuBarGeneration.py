@@ -17,4 +17,8 @@ def generate_mb(self):
 
     env_menu.add_command(label="Choose a music", command=lambda: add_a_music(self))
 
+    env_menu.add_separator()
+
+    env_menu.add_command(label="Choose a script (.py)", command=lambda: add_a_music(self))
+
     self.menubar.add_cascade(label="Environment", menu=env_menu)
