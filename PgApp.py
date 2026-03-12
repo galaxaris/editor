@@ -12,6 +12,8 @@ from api.Game import Game
 from api.environment.Parallax import ParallaxBackground, ParallaxLayer
 from api.assets.Texture import Texture
 from api.assets.Resource import Resource, ResourceType
+from api.utils.Fonts import DEFAULT_FONT
+
 
 class PgApp:
     def __init__(self, embed_id, assets_path):
