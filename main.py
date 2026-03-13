@@ -18,6 +18,8 @@ import os
 import tkinter as tk
 import threading
 
+from editor.EditorData import ObjectsInfo
+
 #### CHANGE WORK DIRECTORY TO THE EDITOR FOLDER ####
 #=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -28,6 +30,8 @@ from editor.tk_utils.MenuBarGeneration import generate_mb
 from editor.tk_utils.KeyRedirection import generate_key_map, handle_keydown, handle_keyup
 from editor.ReadApiGa import get_placeable
 from editor.PgApp import PgApp
+
+from EditorData import ObjectsInfo
 
 from api.utils.ResourcePath import resource_path
 
@@ -52,6 +56,7 @@ class TkApp:
         self.placeable_classes = get_placeable("class")
         self.placeable_func = get_placeable("func")
         print(self.placeable_classes)
+        self.objects_info = ObjectsInfo()
 
         game_frame_id = generate_ui(self)
 

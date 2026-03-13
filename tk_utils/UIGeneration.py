@@ -27,6 +27,7 @@ def generate_ui(self) -> int:
 
     self.object_frame = ttk.Frame(self.root)
     self.object_frame.grid(row=1, column=0, rowspan=2, sticky="news")
+    self.sclbox_object = create_scrollbox(self, self.object_frame)
 
     self.edit_object_frame = ttk.Frame(self.root)
     self.edit_object_frame.grid(row=1, column=0, rowspan=2, sticky="news")
@@ -45,25 +46,31 @@ def generate_ui(self) -> int:
     self.root.update()
     return self.game_frame.winfo_id()
 
-def create_scrollbox(self) -> None:
-    canvas = tk.Canvas(self.edit_object_frame, highlightthickness=0, background="black")
-    canvas.grid(row=3, column=0, columnspan=2, sticky="news", padx=(2, 0))
+def create_scrollbox(self, dest_frame: ttk.Frame) -> ttk.Frame:
+    dest_frame.grid_columnconfigure(0, weight=1)
+    dest_frame.grid_columnconfigure(1, weight=0)
+    dest_frame.grid_rowconfigure(0, weight=1)
 
-    self.scrollbar = ttk.Scrollbar(self.edit_object_frame, orient="vertical", command=canvas.yview)
-    self.scrollbar.grid(row=3, column=2, sticky="ns")
+    canvas = tk.Canvas(dest_frame, highlightthickness=0, background="black")
+    canvas.grid(row=0, column=0, sticky="news", padx=(2, 0))
 
-    self.sclbox_object_att = ttk.Frame(canvas, style = "Noborder.TFrame")
+    scrollbar = ttk.Scrollbar(dest_frame, orient="vertical", command=canvas.yview)
+    scrollbar.grid(row=0, column=1, sticky="ns")
 
-    canvas_window = canvas.create_window((0, 0), window=self.sclbox_object_att, anchor="nw")
+    sclbox_object_att = ttk.Frame(canvas, style = "Noborder.TFrame")
 
-    canvas.configure(yscrollcommand=self.scrollbar.set)
+    canvas_window = canvas.create_window((0, 0), window=sclbox_object_att, anchor="nw")
 
-    self.sclbox_object_att.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    sclbox_object_att.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
 
     canvas.bind("<Configure>", lambda event: canvas.itemconfig(canvas_window, width=event.width))
 
     canvas.bind("<Enter>", lambda _: canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")))
     canvas.bind("<Leave>", lambda _: canvas.unbind_all("<MouseWheel>"))
+
+    return sclbox_object_att
 
 def generate_edit_object_frame(self) -> None:
     self.edit_object_frame.grid_columnconfigure((0, 1), weight=1)
@@ -72,7 +79,9 @@ def generate_edit_object_frame(self) -> None:
     self.edit_object_frame.grid_rowconfigure((0, 1, 2), weight=0)
     self.edit_object_frame.grid_rowconfigure(3, weight=1)
 
-    create_scrollbox(self)
+    intermediate_frame = ttk.Frame(self.edit_object_frame, style = "Noborder.TFrame")
+    intermediate_frame.grid(row=3, column=0, columnspan=3, sticky="news")
+    self.sclbox_object_att = create_scrollbox(self, intermediate_frame)
 
     check_var = tk.BooleanVar(value=False)
     self.chk_global = ttk.Checkbutton(self.edit_object_frame,text="Is it Global ?",variable=check_var)

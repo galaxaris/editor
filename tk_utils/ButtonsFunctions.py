@@ -2,6 +2,9 @@ from tkinter import filedialog
 from tkinter import ttk
 import tkinter as tk
 
+from api.utils.Debug import toggle
+
+
 def new_object(self):
     self.obj_editing = True
     raise_obj_frame(self)
@@ -15,7 +18,12 @@ def exit_edit(self):
     raise_obj_frame(self)
 
 def save_object(self):
-    exit_edit(self)
+    name = self.ntr_object_name.get()
+    if name != "" and self.objects_info.name_dont_exist(name):
+        self.objects_info.add(name, self.cbb_object_class.get(), [])
+        btn_object = ttk.Button(self.sclbox_object, text=name)
+        btn_object.pack(padx=5,pady=5)
+        exit_edit(self)
 
 def raise_obj_frame(self):
     if self.obj_editing:
@@ -46,6 +54,13 @@ def only_numbers(event, type_: str):
         w.insert(0, new_content)
         w.icursor(cursor_pos)
 
+def toggle_button(btn: ttk.Button):
+    if btn.cget("text") == "True":
+        btn.configure(text="False")
+
+    else:
+        btn.configure(text="True")
+
 def generate_build_params(self, class_name):
     for widget in self.sclbox_object_att.winfo_children():
         widget.destroy()
@@ -66,6 +81,11 @@ def generate_build_params(self, class_name):
             case "str":
                 entry_p = ttk.Entry(self.sclbox_object_att)
                 entry_p.grid(row=row, column=1, padx=5, sticky="ew")
+
+            case "bool":
+                toggle_p = ttk.Button(self.sclbox_object_att, text = "True")
+                toggle_p.grid(row=row, column= 1, padx=5, sticky="ew")
+                toggle_p.configure(command= lambda btn=toggle_p: toggle_button(btn))
 
             case t if any(x in t for x in ['tuple', 'list', 'Vector2']):
                 tuple_frame = ttk.Frame(self.sclbox_object_att, style="Noborder.TFrame")

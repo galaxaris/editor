@@ -82,7 +82,7 @@ class Param:
 
     def analyse_type(self):
         types = self.type_.strip().split("|")
-        self.type_ = types[0]
+        self.type_ = types[0].strip()
 
         for type_ in types:
             if any(word in type_ for word in ["tuple", "list"]):
