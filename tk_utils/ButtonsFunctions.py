@@ -6,27 +6,40 @@ from api.utils.Debug import toggle
 
 
 def new_object(self):
-    self.obj_editing = True
-    raise_obj_frame(self)
+    if not self.obj_editing:
+        self.ntr_object_name.delete(0, tk.END)
+        self.obj_editing = True
+        raise_obj_frame(self)
 
 def edit_object(self):
-    self.obj_editing = True
-    raise_obj_frame(self)
+    if self.selected_object and not self.obj_editing:
+        self.ntr_object_name.delete(0, tk.END)
+        class_ref, sep, obj_name = self.selected_object.cget("text").partition(":")
+        self.ntr_object_name.insert(0, obj_name.strip())
+
+        self.obj_editing = True
+        raise_obj_frame(self)
+
+def delete_object(self):
+    if self.selected_object and not self.obj_editing:
+        self.objects_info.delete(self.selected_object)
+        self.selected_object.destroy()
 
 def exit_edit(self):
     self.obj_editing = False
     raise_obj_frame(self)
 
 def save_object(self):
-    name = self.ntr_object_name.get()
-    if name != "" and self.objects_info.name_dont_exist(name):
-        self.objects_info.add(name, self.cbb_object_class.get(), [])
+    if self.obj_editing:
+        name = self.ntr_object_name.get()
+        if name != "" and self.objects_info.name_dont_exist(name):
+            self.objects_info.add(name, self.cbb_object_class.get(), [])
 
-        btn_object = ttk.Button(self.sclbox_object, text= f"{self.cbb_object_class.get()} : {name}")
-        btn_object.pack(padx=5,pady=5, fill="x")
-        btn_object.configure(command=lambda btn=btn_object: select_object(self,btn))
+            btn_object = ttk.Button(self.sclbox_object, text= f"{self.cbb_object_class.get()} : {name}")
+            btn_object.pack(padx=5,pady=5, fill="x")
+            btn_object.configure(command=lambda btn=btn_object: select_object(self,btn))
 
-        exit_edit(self)
+            exit_edit(self)
 
 def select_object(self,btn):
     if self.selected_object:
@@ -134,5 +147,5 @@ def add_a_script(self):
     filename = filedialog.askopenfilename(title='Select a script',initialdir='/',filetypes=filetypes)
 
     if filename:
-        self.level_info.music = filename
+        self.level_info.script = filename
         self.env_menu.entryconfig(4, label="✓ Choose a script")

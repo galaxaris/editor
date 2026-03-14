@@ -1,4 +1,5 @@
 from ReadApiGa import Param
+from tkinter import ttk
 
 class LevelInfo:
     def __init__(self):
@@ -13,6 +14,13 @@ class ObjectsInfo:
 
     def add(self, name:str, class_ref:str, params: list[Param]):
         self.objects.append({"name": name, "classs_ref": class_ref, "params": params})
+
+    def delete(self, btn: ttk.Button):
+        class_ref, sep, obj_name = btn.cget("text").partition(":")
+        for obj in self.objects:
+            if obj["name"] == obj_name.strip():
+                self.objects.remove(obj)
+                break
 
     def name_dont_exist(self, name: str) -> bool:
         names = [obj["name"] for obj in self.objects]

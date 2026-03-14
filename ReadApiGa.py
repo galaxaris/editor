@@ -56,7 +56,7 @@ def get_params(obj, type_: str) -> list:
     params = []
 
     for p_name, p_obj in init_sig.parameters.items():
-        if type_ == "class" and p_name in ('self', 'args', 'kwargs', 'pos'):
+        if type_ == "class" and p_name in ('self', 'args', 'kwargs', 'pos', 'size'): #ignored args, they are already present in every GameObjects and callbacks
             continue
 
         if p_obj.annotation is inspect.Parameter.empty:

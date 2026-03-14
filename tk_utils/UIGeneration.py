@@ -122,7 +122,7 @@ def generate_actions_frame_ui(self) -> None:
     self.btn_save_object = ttk.Button(self.actions_frame, text="Save the\nobject", command=lambda : save_object(self))
     self.btn_save_object.grid(row=1, column=1, sticky="news", padx=(5, 10), pady=(5,10))
 
-    self.btn_del_object = ttk.Button(self.actions_frame, text="Delete the\nobject")
+    self.btn_del_object = ttk.Button(self.actions_frame, text="Delete the\nobject", command=lambda : delete_object(self))
     self.btn_del_object.grid(row=1, column=0, sticky="news", padx=(10,5), pady=(5,10))
 
 def generate_header_frame_ui(self) -> None:
