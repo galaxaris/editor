@@ -27,6 +27,8 @@ def generate_ui(self) -> int:
 
     self.object_frame = ttk.Frame(self.root)
     self.object_frame.grid(row=1, column=0, rowspan=2, sticky="news")
+    self.object_frame.grid_columnconfigure(0, weight=1)
+    self.object_frame.grid_rowconfigure(0, weight=0)
     self.sclbox_object = create_scrollbox(self, self.object_frame)
 
     self.edit_object_frame = ttk.Frame(self.root)

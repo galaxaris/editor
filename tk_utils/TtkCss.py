@@ -9,6 +9,8 @@ def apply_ttk_style():
     style.configure("TButton",background=bg_color,foreground="white",focuscolor="none",focusthickness=0, relief="flat")
     style.map("TButton",background=[("active", "#3a3a3a")],foreground=[("active", "white")])
     style.configure("Image.TButton", padding=0, borderwidth=0, background=bg_color, foreground="white", focuscolor="none", focusthickness=0,relief="flat")
+    style.configure("Selected.TButton", foreground="green")
+    style.map("Selected.TButton", foreground=[("active", "green")])
 
     style.configure("TCheckbutton", background="black", foreground="white",focuscolor="none",focusthickness=0)
     style.map("TCheckbutton", foreground=[("active", "white")], background=[("active", "black")])

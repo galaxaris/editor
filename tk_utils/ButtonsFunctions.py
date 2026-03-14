@@ -21,9 +21,19 @@ def save_object(self):
     name = self.ntr_object_name.get()
     if name != "" and self.objects_info.name_dont_exist(name):
         self.objects_info.add(name, self.cbb_object_class.get(), [])
-        btn_object = ttk.Button(self.sclbox_object, text=name)
-        btn_object.pack(padx=5,pady=5)
+
+        btn_object = ttk.Button(self.sclbox_object, text= f"{self.cbb_object_class.get()} : {name}")
+        btn_object.pack(padx=5,pady=5, fill="x")
+        btn_object.configure(command=lambda btn=btn_object: select_object(self,btn))
+
         exit_edit(self)
+
+def select_object(self,btn):
+    if self.selected_object:
+        self.selected_object.configure(style="TButton")
+
+    self.selected_object = btn
+    self.selected_object.configure(style="Selected.TButton")
 
 def raise_obj_frame(self):
     if self.obj_editing:
@@ -115,7 +125,14 @@ def add_a_music(self):
     filename = filedialog.askopenfilename(title='Select a music',initialdir='/',filetypes=filetypes)
 
     if filename:
-        print(f"Musique sélectionnée : {filename}")
-        return filename
+        self.level_info.music = filename
+        self.env_menu.entryconfig(3, label="✓ Choose a music")
 
-    return None
+def add_a_script(self):
+    filetypes = (('Python file', '*.py'),('Any files', '*.*'))
+
+    filename = filedialog.askopenfilename(title='Select a script',initialdir='/',filetypes=filetypes)
+
+    if filename:
+        self.level_info.music = filename
+        self.env_menu.entryconfig(4, label="✓ Choose a script")
