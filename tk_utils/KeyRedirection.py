@@ -6,10 +6,28 @@ def bind_keys(self, event):
     self.root.bind("<KeyPress>", lambda _event: handle_keydown(self, _event))
     self.root.bind("<KeyRelease>", lambda _event: handle_keyup(self, _event))
 
+    #self.root.bind("<Button-1>", lambda _event: handle_mouse_down(self, _event, 1))
+    #self.root.bind("<Button-3>", lambda _event: handle_mouse_down(self, _event, 3))
+    #self.root.bind("<ButtonRelease-1>", lambda _event: handle_mouse_up(self, _event, 1))
+    #self.root.bind("<ButtonRelease-3>", lambda _event: handle_mouse_up(self, _event, 3))
+
 def unbind_keys(self, event):
     Inputs.editor_release_key()
     self.root.unbind("<KeyPress>")
     self.root.unbind("<KeyRelease>")
+
+    #self.root.unbind("<Button-1>")
+    #self.root.unbind("<Button-3>")
+    #self.root.unbind("<ButtonRelease-1>")
+    #self.root.unbind("<ButtonRelease-3>")
+
+#def handle_mouse_down(self, event, button):
+    #mouse_key = "MOUSE_LEFT" if button == 1 else "MOUSE_RIGHT"
+    #Inputs.editor_edit_key(mouse_key, True)
+
+#def handle_mouse_up(self, event, button):
+    #mouse_key = "MOUSE_LEFT" if button == 1 else "MOUSE_RIGHT"
+    #Inputs.editor_edit_key(mouse_key, False)
 
 def generate_key_map():
     mapping = {

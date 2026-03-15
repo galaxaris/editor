@@ -1,9 +1,9 @@
 from tkinter import filedialog
 from tkinter import ttk
 import tkinter as tk
+from tkinter import messagebox
 
 from api.utils.Debug import toggle
-
 
 def new_object(self):
     if not self.obj_editing:
@@ -33,13 +33,75 @@ def save_object(self):
     if self.obj_editing:
         name = self.ntr_object_name.get()
         if name != "" and self.objects_info.name_dont_exist(name):
-            self.objects_info.add(name, self.cbb_object_class.get(), [])
+            params = retrieve_params(self)
+            if params:
+                self.objects_info.add(name, self.cbb_object_class.get(), params)
 
-            btn_object = ttk.Button(self.sclbox_object, text= f"{self.cbb_object_class.get()} : {name}")
-            btn_object.pack(padx=5,pady=5, fill="x")
-            btn_object.configure(command=lambda btn=btn_object: select_object(self,btn))
+                btn_object = ttk.Button(self.sclbox_object, text= f"{self.cbb_object_class.get()} : {name}")
+                btn_object.pack(padx=5,pady=5, fill="x")
+                btn_object.configure(command=lambda btn=btn_object: select_object(self,btn))
 
-            exit_edit(self)
+                exit_edit(self)
+
+def retrieve_params(self) -> list:
+    params = []
+    entries = self.sclbox_object_att.grid_slaves(column=1)
+    expected_params = self.placeable_classes[self.cbb_object_class.get()]["params"]
+    entries.reverse()
+
+    for index, param in enumerate(expected_params):
+        try:
+            match param.type_:
+                case "int":
+                    val = int(entries[index].get())
+
+                case "float":
+                    val = float(entries[index].get())
+
+                case "str":
+                    val = entries[index].get()
+
+                case "bool":
+                    val = entries[index].cget("text")
+                    val = True if val == "True" else False
+
+                case t if any(x in t for x in ['tuple', 'Vector2']):
+                    sub_entries = entries[index].grid_slaves(row=0)
+                    sub_entries.reverse()
+
+                    val = []
+                    for index2, type_ in enumerate(param.many_types):
+                        match type_:
+                            case "int":
+                                val.append(int(sub_entries[index2].get()))
+
+                            case "float":
+                                val.append(float(sub_entries[index2].get()))
+
+                            case "str":
+                                val.append(sub_entries[index2].get())
+
+                            case "bool":
+                                tmp = sub_entries[index2].cget("text")
+                                val.append(True if tmp == "True" else False)
+
+                            case _:
+                                val.append(None)
+
+                case _:
+                    val = None
+
+        except:
+            messagebox.showwarning("Warning!", f"{param.name} {param.type_} is not filled!")
+            val = None
+
+        params.append(val)
+    if len(params) == 0:
+        return [None]
+    return params
+
+def place_object(self, event: tk.Event):
+    pass
 
 def select_object(self,btn):
     if self.selected_object:
@@ -93,7 +155,7 @@ def generate_build_params(self, class_name):
         label_p = ttk.Label(self.sclbox_object_att, text=f"{params.name}\n({params.type_})", padding=10)
         label_p.grid(row=row, column=0, padx=5, pady=5, sticky="news")
 
-        param = params.many_types[0]
+        param = params.many_types
         match params.type_:
             case "int" | "float":
                 entry_p = ttk.Entry(self.sclbox_object_att)
@@ -126,11 +188,11 @@ def generate_build_params(self, class_name):
             case _:
                 print("default",params.__dict__)
 
-
         row += 1
 
-    self.sclbox_object_att.grid_columnconfigure((0,1), weight=1, uniform="col3")
-    self.sclbox_object_att.grid_rowconfigure([i for i in range(row)], weight=1)
+    self.sclbox_object_att.grid_columnconfigure((0, 1), weight=1, uniform="col3")
+    if row!=0:
+        self.sclbox_object_att.grid_rowconfigure([i for i in range(row)], weight=1)
 
 def add_a_music(self):
     filetypes = (('Audio files', '*.mp3 *.wav *.ogg'),('Any files', '*.*'))

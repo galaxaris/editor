@@ -77,30 +77,28 @@ class Param:
         self.type_ = type_
         self.default_val = default_val
         self.val = None
-        self.many_types = []
+        self.many_types = None
         self.analyse_type()
 
     def analyse_type(self):
         types = self.type_.strip().split("|")
         self.type_ = types[0].strip()
 
-        for type_ in types:
-            if any(word in type_ for word in ["tuple", "list"]):
+        if any(word in self.type_ for word in ["tuple", "list"]):
 
-                type_name, separator, after = type_.partition("[")
+            type_name, separator, after = self.type_.partition("[")
 
-                if separator:
-                    intern_type, separator, _ = after.partition("]")
-
-                else:
-                    intern_type = type_
-
-                values = intern_type.split(",")
-                self.many_types.append({"val": values, "count": len(values)})
-
-            elif type_ == "pygame.Vector2":
-                self.many_types.append({"val":("float", "float"), "count":2})
+            if separator:
+                intern_type, separator, _ = after.partition("]")
 
             else:
-                print("TYPE", self.type_)
-                self.many_types.append({"val": None, "count": 0})
+                intern_type = self.type_
+
+            values = intern_type.split(",")
+            self.many_types = {"val": values, "count": len(values)}
+
+        elif self.type_ == "pygame.Vector2":
+            self.many_types = {"val":("float", "float"), "count":2}
+
+        else:
+            self.many_types = {"val": None, "count": 0}

@@ -12,7 +12,7 @@ class ObjectsInfo:
     def __init__(self):
         self.objects = []
 
-    def add(self, name:str, class_ref:str, params: list[Param]):
+    def add(self, name:str, class_ref:str, params: list):
         self.objects.append({"name": name, "classs_ref": class_ref, "params": params})
 
     def delete(self, btn: ttk.Button):

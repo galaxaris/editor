@@ -30,6 +30,7 @@ from editor.tk_utils.MenuBarGeneration import generate_mb
 from editor.tk_utils.KeyRedirection import generate_key_map, handle_keydown, handle_keyup
 from editor.ReadApiGa import get_placeable
 from editor.PgApp import PgApp
+from editor.tk_utils.ButtonsFunctions import place_object
 
 from EditorData import ObjectsInfo, LevelInfo
 
@@ -55,7 +56,6 @@ class TkApp:
         self.key_map = generate_key_map()
         self.placeable_classes = get_placeable("class")
         self.placeable_func = get_placeable("func")
-        print(self.placeable_classes)
 
         self.level_info = LevelInfo()
         self.objects_info = ObjectsInfo()
@@ -68,6 +68,7 @@ class TkApp:
         #self.root.bind("<KeyRelease>", lambda event: handle_keyup(self, event))
         self.root.bind("<F11>", self.maximize)
         self.root.bind("<Control-F11>", self.toggle_fullscreen)
+        self.root.bind("<N>", lambda event: place_object(self, event))
 
         self.game_thread = threading.Thread(target=lambda: self.pg_app.game.run(self.pg_app.loop), daemon=True)
         self.game_thread.start()
