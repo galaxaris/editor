@@ -32,7 +32,7 @@ from editor.ReadApiGa import get_placeable
 from editor.PgApp import PgApp
 from editor.tk_utils.ButtonsFunctions import place_object
 
-from EditorData import ObjectsInfo, LevelInfo
+from EditorData import ObjectsInfo, LevelInfo, ObjectsLayout
 
 from api.utils.ResourcePath import resource_path
 
@@ -59,16 +59,18 @@ class TkApp:
 
         self.level_info = LevelInfo()
         self.objects_info = ObjectsInfo()
+        self.info_colors = []
+        self.objects_layout = ObjectsLayout()
         self.selected_object = None
 
         game_frame_id = generate_ui(self)
 
-        self.pg_app = PgApp(game_frame_id, self.assets_path)
+        self.pg_app = PgApp(game_frame_id, self, self.assets_path)
         #self.root.bind("<KeyPress>", lambda event: handle_keydown(self, event))
         #self.root.bind("<KeyRelease>", lambda event: handle_keyup(self, event))
         self.root.bind("<F11>", self.maximize)
         self.root.bind("<Control-F11>", self.toggle_fullscreen)
-        self.root.bind("<N>", lambda event: place_object(self, event))
+        self.root.bind("<n>", lambda event: place_object(self, event))
 
         self.game_thread = threading.Thread(target=lambda: self.pg_app.game.run(self.pg_app.loop), daemon=True)
         self.game_thread.start()

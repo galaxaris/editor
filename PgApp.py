@@ -12,12 +12,11 @@ from api.Game import Game
 from api.environment.Parallax import ParallaxBackground, ParallaxLayer
 from api.assets.Texture import Texture
 from api.assets.Resource import Resource, ResourceType
-from api.utils.Fonts import DEFAULT_FONT
 from api.utils.Inputs import get_inputs, get_once_inputs
 
 
 class PgApp:
-    def __init__(self, embed_id, assets_path):
+    def __init__(self, embed_id, master, assets_path):
         #this part lets us run the pygame window in a frame in our tkinter window
         os.environ['SDL_WINDOWID'] = str(embed_id)
         os.environ['SDL_VIDEODRIVER'] = 'windib'
@@ -25,6 +24,7 @@ class PgApp:
 
         self.RES = pg.Vector2(640, 360)
         self.FPS = 60
+        self.master = master
         self.assets_path = assets_path
 
         self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
@@ -36,9 +36,8 @@ class PgApp:
         self.previous_click_mouse = pg.Vector2(0, 0)
 
     def loop(self):
-        inputs = get_inputs()
-        if inputs["aim"]:
-            print("ouoi")
+        for obj in self.master.objects_layout.obj_list:
+            self.game.scene.add(obj.solid, "#editor")
 
     def setup_api(self):
         glob = Resource(ResourceType.GLOBAL, self.assets_path)
@@ -47,4 +46,5 @@ class PgApp:
         grid = Texture("grid.png", glob) #draw the grid via a parallax layer :)
         p_bg = ParallaxBackground(self.RES, [ParallaxLayer(pg.Vector2(1, 1), grid)], (0, 0, 0))
         self.game.scene.set_background(p_bg)
+        self.game.scene.set_layer(0, "#editor")
 

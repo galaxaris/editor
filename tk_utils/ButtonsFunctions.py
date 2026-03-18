@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from api.utils.Debug import toggle
+from editor.EditorData import Object
 
 def new_object(self):
     if not self.obj_editing:
@@ -35,7 +36,7 @@ def save_object(self):
         if name != "" and self.objects_info.name_dont_exist(name):
             params = retrieve_params(self)
             if params:
-                self.objects_info.add(name, self.cbb_object_class.get(), params)
+                self.objects_info.add(name, self.cbb_object_class.get(), params, set())
 
                 btn_object = ttk.Button(self.sclbox_object, text= f"{self.cbb_object_class.get()} : {name}")
                 btn_object.pack(padx=5,pady=5, fill="x")
@@ -101,7 +102,9 @@ def retrieve_params(self) -> list:
     return params
 
 def place_object(self, event: tk.Event):
-    pass
+    if self.selected_object:
+        name = self.selected_object.cget("text")
+        self.objects_layout.obj_list.append(Object(name, (0,0), (10,10)))
 
 def select_object(self,btn):
     if self.selected_object:
