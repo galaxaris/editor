@@ -12,8 +12,7 @@ def generate_ui(self) -> int:
 
     self.root.grid_rowconfigure(0, minsize=game_frame_w*9/16*3/16, weight=0)
     self.root.grid_rowconfigure(1, minsize=game_frame_w*9/16*13/16, weight=0)
-    self.root.grid_rowconfigure(2, weight=1)
-    self.root.grid_rowconfigure(3, weight=3)
+    self.root.grid_rowconfigure(2, weight=4)
 
     self.game_frame = ttk.Frame(self.root)
     self.game_frame.grid(row=0, column=1, rowspan=2, sticky="news")
@@ -26,23 +25,23 @@ def generate_ui(self) -> int:
     generate_header_frame_ui(self)
 
     self.object_frame = ttk.Frame(self.root)
-    self.object_frame.grid(row=1, column=0, rowspan=2, sticky="news")
+    self.object_frame.grid(row=1, column=0, sticky="news")
 
     generate_object_frame(self)
 
     self.edit_object_frame = ttk.Frame(self.root)
-    self.edit_object_frame.grid(row=1, column=0, rowspan=2, sticky="news")
+    self.edit_object_frame.grid(row=1, column=0, sticky="news")
     generate_edit_object_frame(self)
 
     self.object_frame.tkraise()
 
-    self.actions_frame = ttk.Frame(self.root)
-    self.actions_frame.grid(row=3, column=0, sticky="news")
+    self.placement_frame = ttk.Frame(self.root)
+    self.placement_frame.grid(row=2, column=0, sticky="news")
 
-    generate_actions_frame_ui(self)
+    generate_placement_frame_ui(self)
 
     self.assets_frame = ttk.Frame(self.root)
-    self.assets_frame.grid(row=2, column=1, rowspan=2, sticky="news")
+    self.assets_frame.grid(row=2, column=1, sticky="news")
 
     self.root.update()
     return self.game_frame.winfo_id()
@@ -62,10 +61,10 @@ def generate_object_frame(self):
     self.btn_add_object.grid(row=0, column=0, sticky="news", padx=(10, 5), pady=10)
 
     self.btn_edit_object = ttk.Button(self.object_btn_frame, text="Edit the\nobject", command=lambda: edit_object(self))
-    self.btn_edit_object.grid(row=0, column=1, sticky="news", padx=(5, 10), pady=10)
+    self.btn_edit_object.grid(row=0, column=1, sticky="news", padx=5, pady=10)
 
     self.btn_del_object = ttk.Button(self.object_btn_frame, text="Delete the\nobject", command=lambda: delete_object(self))
-    self.btn_del_object.grid(row=0, column=2, sticky="news", padx=(10, 5), pady=10)
+    self.btn_del_object.grid(row=0, column=2, sticky="news", padx=(5,10), pady=10)
 
     self.sub_frame = ttk.Frame(self.object_frame, style="Noborder.TFrame")
     self.sub_frame.grid(row=1, column=0, sticky="news")
@@ -131,10 +130,39 @@ def generate_edit_object_frame(self) -> None:
     self.ntr_object_name = ttk.Entry(self.edit_object_frame)
     self.ntr_object_name.grid(row=2, column=1, sticky="news", padx=(5, 0), pady=5)
 
-def generate_actions_frame_ui(self) -> None:
-    self.actions_frame.grid_columnconfigure((0, 1), weight=1)
-    self.actions_frame.grid_rowconfigure((0, 1), weight=1)
+def generate_placement_frame_ui(self) -> None:
+    self.placement_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
+    self.placement_frame.grid_rowconfigure((0, 1, 2, 3), weight=1)
 
+    self.lbl_obj_pos = ttk.Label(self.placement_frame, text="Position")
+    self.lbl_obj_pos.grid(row=0, column=0, columnspan=2, padx=5,sticky="ew")
+
+    self.ntr_obj_posx = ttk.Entry(self.placement_frame)
+    self.ntr_obj_posx.grid(row=1, column=0, padx=5, sticky="ew")
+
+    self.ntr_obj_posy = ttk.Entry(self.placement_frame)
+    self.ntr_obj_posy.grid(row=1, column=1, padx=5, sticky="ew")
+
+    self.ntr_obj_sizex = ttk.Entry(self.placement_frame)
+    self.ntr_obj_sizex.grid(row=1, column=2, padx=5, sticky="ew")
+
+    self.ntr_obj_sizey = ttk.Entry(self.placement_frame)
+    self.ntr_obj_sizey.grid(row=1, column=3, padx=5, sticky="ew")
+
+    self.lbl_obj_size = ttk.Label(self.placement_frame, text="Size")
+    self.lbl_obj_size.grid(row=0, column=2, columnspan=2, padx=5,sticky="ew")
+
+    self.lbl_obj_layer = ttk.Label(self.placement_frame, text="Layer")
+    self.lbl_obj_layer.grid(row=2, column=0, columnspan=2, padx=5, sticky="ew")
+
+    self.ntr_obj_layer = ttk.Entry(self.placement_frame)
+    self.ntr_obj_layer.grid(row=3, column=0, columnspan=2, padx=5, sticky="ew")
+
+    self.lbl_obj_tags = ttk.Label(self.placement_frame, text="tags")
+    self.lbl_obj_tags.grid(row=2, column=2, columnspan=2, padx=5, sticky="ew")
+
+    self.ntr_obj_tags = ttk.Entry(self.placement_frame)
+    self.ntr_obj_tags.grid(row=3, column=2, columnspan=2, padx=5, sticky="ew")
 
 def generate_header_frame_ui(self) -> None:
     self.header_frame.grid_columnconfigure((0, 1, 2), weight=1)
