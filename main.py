@@ -32,7 +32,7 @@ from editor.ReadApiGa import get_placeable
 from editor.PgApp import PgApp
 from editor.tk_utils.ButtonsFunctions import place_object
 
-from EditorData import ObjectsInfo, LevelInfo, ObjectsLayout
+from editor.EditorData import ObjectsInfo, LevelInfo, ObjectsLayout
 
 from api.utils.ResourcePath import resource_path
 

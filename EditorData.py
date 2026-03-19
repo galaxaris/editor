@@ -1,8 +1,8 @@
-from ReadApiGa import Param
 from tkinter import ttk
 import pygame as pg
 
 from api.environment.Solid import Solid
+from editor.ReadApiGa import Param
 
 class LevelInfo:
     def __init__(self):
