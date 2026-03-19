@@ -27,9 +27,8 @@ def generate_ui(self) -> int:
 
     self.object_frame = ttk.Frame(self.root)
     self.object_frame.grid(row=1, column=0, rowspan=2, sticky="news")
-    self.object_frame.grid_columnconfigure(0, weight=1)
-    self.object_frame.grid_rowconfigure(0, weight=0)
-    self.sclbox_object = create_scrollbox(self, self.object_frame)
+
+    generate_object_frame(self)
 
     self.edit_object_frame = ttk.Frame(self.root)
     self.edit_object_frame.grid(row=1, column=0, rowspan=2, sticky="news")
@@ -47,6 +46,30 @@ def generate_ui(self) -> int:
 
     self.root.update()
     return self.game_frame.winfo_id()
+
+def generate_object_frame(self):
+    self.object_frame.grid_columnconfigure(0, weight=1)
+    self.object_frame.grid_rowconfigure(0, weight=0)
+    self.object_frame.grid_rowconfigure(1, weight=1)
+
+    self.object_btn_frame = ttk.Frame(self.object_frame, style="Noborder.TFrame")
+    self.object_btn_frame.grid(row=0, column=0, sticky="news")
+
+    self.object_btn_frame.columnconfigure((0,1,2), weight=1)
+    self.object_btn_frame.rowconfigure(0, weight=1)
+
+    self.btn_add_object = ttk.Button(self.object_btn_frame, text="Add an\nobject", command=lambda: new_object(self))
+    self.btn_add_object.grid(row=0, column=0, sticky="news", padx=(10, 5), pady=10)
+
+    self.btn_edit_object = ttk.Button(self.object_btn_frame, text="Edit the\nobject", command=lambda: edit_object(self))
+    self.btn_edit_object.grid(row=0, column=1, sticky="news", padx=(5, 10), pady=10)
+
+    self.btn_del_object = ttk.Button(self.object_btn_frame, text="Delete the\nobject", command=lambda: delete_object(self))
+    self.btn_del_object.grid(row=0, column=2, sticky="news", padx=(10, 5), pady=10)
+
+    self.sub_frame = ttk.Frame(self.object_frame, style="Noborder.TFrame")
+    self.sub_frame.grid(row=1, column=0, sticky="news")
+    self.sclbox_object = create_scrollbox(self, self.sub_frame)
 
 def create_scrollbox(self, dest_frame: ttk.Frame) -> ttk.Frame:
     dest_frame.grid_columnconfigure(0, weight=1)
@@ -85,9 +108,8 @@ def generate_edit_object_frame(self) -> None:
     intermediate_frame.grid(row=3, column=0, columnspan=3, sticky="news")
     self.sclbox_object_att = create_scrollbox(self, intermediate_frame)
 
-    check_var = tk.BooleanVar(value=False)
-    self.chk_global = ttk.Checkbutton(self.edit_object_frame,text="Is it Global ?",variable=check_var)
-    self.chk_global.grid(row=0, column=0, columnspan=2, sticky="news", padx=(10, 5), pady=5)
+    self.btn_save_object = ttk.Button(self.edit_object_frame, text="Save the object", command=lambda: save_object(self))
+    self.btn_save_object.grid(row=0, column=0, sticky="news", padx=(10, 5), pady=5)
 
     self.btn_discard = ttk.Button(self.edit_object_frame, text="Discard changes", command=lambda : exit_edit(self))
     self.btn_discard.grid(row=0, column=1, columnspan=2, sticky="news", padx=(5, 10), pady=5)
@@ -113,17 +135,6 @@ def generate_actions_frame_ui(self) -> None:
     self.actions_frame.grid_columnconfigure((0, 1), weight=1)
     self.actions_frame.grid_rowconfigure((0, 1), weight=1)
 
-    self.btn_add_object = ttk.Button(self.actions_frame, text="Add an\nobject", command=lambda : new_object(self))
-    self.btn_add_object.grid(row=0, column=0, sticky="news", padx=(10,5), pady=(10,5))
-
-    self.btn_edit_object = ttk.Button(self.actions_frame, text="Edit the\nobject", command=lambda : edit_object(self))
-    self.btn_edit_object.grid(row=0, column=1, sticky="news", padx=(5, 10), pady=(10,5))
-
-    self.btn_save_object = ttk.Button(self.actions_frame, text="Save the\nobject", command=lambda : save_object(self))
-    self.btn_save_object.grid(row=1, column=1, sticky="news", padx=(5, 10), pady=(5,10))
-
-    self.btn_del_object = ttk.Button(self.actions_frame, text="Delete the\nobject", command=lambda : delete_object(self))
-    self.btn_del_object.grid(row=1, column=0, sticky="news", padx=(10,5), pady=(5,10))
 
 def generate_header_frame_ui(self) -> None:
     self.header_frame.grid_columnconfigure((0, 1, 2), weight=1)
