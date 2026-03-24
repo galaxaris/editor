@@ -12,7 +12,7 @@ from api.Game import Game
 from api.environment.Parallax import ParallaxBackground, ParallaxLayer
 from api.assets.Texture import Texture
 from api.assets.Resource import Resource, ResourceType
-from api.utils.Inputs import get_inputs, get_once_inputs, get_mouse
+from api.utils.InputManager import get_inputs, get_once_inputs, get_mouse
 
 
 class PgApp:
