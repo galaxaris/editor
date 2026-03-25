@@ -12,7 +12,7 @@ from api.Game import Game
 from api.environment.Parallax import ParallaxBackground, ParallaxLayer
 from api.assets.Texture import Texture
 from api.assets.Resource import Resource, ResourceType
-from api.utils.InputManager import get_inputs, get_once_inputs, get_mouse
+from api.utils.InputManager import get_inputs, get_mouse_position, get_once_inputs
 
 
 class PgApp:
@@ -36,7 +36,7 @@ class PgApp:
         self.previous_click_mouse = pg.Vector2(0, 0)
 
     def loop(self):
-        print(get_mouse())
+        print(get_mouse_position())
         for obj in self.master.objects_layout.obj_list:
             self.game.scene.add(obj.solid, "#editor")
 
