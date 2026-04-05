@@ -11,7 +11,7 @@ from api.utils import Debug, Fonts
 from api.Game import Game
 from api.environment.Parallax import ParallaxBackground, ParallaxLayer
 from api.assets.Texture import Texture
-from api.assets.Resource import Resource, ResourceType
+from api.assets.ResourceManager import Resource, ResourceType
 from api.utils.InputManager import get_inputs, get_mouse_position, get_once_inputs
 
 
