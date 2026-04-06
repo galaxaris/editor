@@ -1,6 +1,6 @@
 import pygame as pg
 
-from api.utils import Inputs
+from api.utils import InputManager
 
 def bind_keys(self, event):
     self.root.bind("<KeyPress>", lambda _event: handle_keydown(self, _event))
@@ -14,7 +14,7 @@ def bind_keys(self, event):
     #self.root.bind("<ButtonRelease-3>", lambda _event: handle_mouse_up(self, _event, 3))
 
 def unbind_keys(self, event):
-    Inputs.editor_release_key()
+    InputManager.editor_release_key()
     self.root.unbind("<KeyPress>")
     self.root.unbind("<KeyRelease>")
     self.gameFrameFocused = False
@@ -67,10 +67,10 @@ def handle_keydown(self, event):
     pg_key = self.key_map.get(event.keysym)
     if pg_key:
         pg.event.post(pg.event.Event(pg.KEYDOWN, {'key': pg_key}))
-        Inputs.editor_edit_key(pg_key, True)
+        InputManager.editor_edit_key(pg_key, True)
 
 def handle_keyup(self, event):
     pg_key = self.key_map.get(event.keysym)
     if pg_key:
         pg.event.post(pg.event.Event(pg.KEYUP, {'key': pg_key}))
-        Inputs.editor_edit_key(pg_key, False)
+        InputManager.editor_edit_key(pg_key, False)
