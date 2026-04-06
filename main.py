@@ -30,7 +30,7 @@ from editor.tk_utils.MenuBarGeneration import generate_mb
 from editor.tk_utils.KeyRedirection import generate_key_map, handle_keydown, handle_keyup
 from editor.ReadApiGa import get_placeable
 from editor.PgApp import PgApp
-from editor.tk_utils.ButtonsFunctions import place_object
+from editor.tk_utils.ButtonsFunctions import place_object, replace_object
 
 from editor.EditorData import ObjectsInfo, LevelInfo, ObjectsLayout
 
@@ -53,6 +53,7 @@ class TkApp:
 
         self.assets_path = resource_path("assets")
         self.obj_editing = False
+        self.gameFrameFocused = False
         self.key_map = generate_key_map()
         self.placeable_classes = get_placeable("class")
         self.placeable_func = get_placeable("func")
@@ -62,6 +63,7 @@ class TkApp:
         self.info_colors = []
         self.objects_layout = ObjectsLayout()
         self.selected_object = None
+        self.replace_obj = None
 
         game_frame_id = generate_ui(self)
 
@@ -70,7 +72,8 @@ class TkApp:
         #self.root.bind("<KeyRelease>", lambda event: handle_keyup(self, event))
         self.root.bind("<F11>", self.maximize)
         self.root.bind("<Control-F11>", self.toggle_fullscreen)
-        self.root.bind("<n>", lambda event: place_object(self, event))
+        self.root.bind("<Button-1>", lambda event: place_object(self, event))
+        self.root.bind("<Button-3>", lambda event: replace_object(self, event))
 
         self.game_thread = threading.Thread(target=lambda: self.pg_app.game.run(self.pg_app.loop), daemon=True)
         self.game_thread.start()

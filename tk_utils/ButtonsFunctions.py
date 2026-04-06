@@ -5,6 +5,9 @@ from tkinter import messagebox
 
 from api.utils.Debug import toggle
 from editor.EditorData import Object
+from api.utils.Inputs import get_mouse
+from api.GameObject import GameObject
+from api.physics.Collision import get_collided_objects
 
 def new_object(self):
     if not self.obj_editing:
@@ -44,7 +47,7 @@ def save_object(self):
 
                 exit_edit(self)
 
-def retrieve_params(self) -> list:
+def retrieve_params(self) -> list|None:
     params = []
     entries = self.sclbox_object_att.grid_slaves(column=1)
     expected_params = self.placeable_classes[self.cbb_object_class.get()]["params"]
@@ -98,13 +101,32 @@ def retrieve_params(self) -> list:
 
         params.append(val)
     if len(params) == 0:
-        return [None]
+        return None
     return params
 
 def place_object(self, event: tk.Event):
-    if self.selected_object:
+    if self.selected_object and self.gameFrameFocused:
         name = self.selected_object.cget("text")
-        self.objects_layout.obj_list.append(Object(name, (0,0), (10,10)))
+        self.objects_layout.obj_list.append(Object(get_mouse()/self.pg_app.game.scene.scale_ratio+self.pg_app.game.scene.camera.position, (10,10), name))
+
+def replace_object(self, event: tk.Event):
+    mouse = GameObject(get_mouse()/self.pg_app.game.scene.scale_ratio+self.pg_app.game.scene.camera.position, (1,1))
+    obj_touched = get_collided_objects(mouse, "editorObj",self.objects_layout.obj_list, 0, 0)
+
+    if len(obj_touched) > 0:
+        self.replace_obj = obj_touched[0][0]
+        update_replace_window(self)
+
+def update_replace_window(self):
+    rewrite_ntr(self.ntr_obj_posx, int(self.replace_obj.pos.x))
+    rewrite_ntr(self.ntr_obj_posy, int(self.replace_obj.pos.y))
+
+    rewrite_ntr(self.ntr_obj_sizex, int(self.replace_obj.size.x))
+    rewrite_ntr(self.ntr_obj_sizey, int(self.replace_obj.size.y))
+
+def rewrite_ntr(ntr: ttk.Entry, text: str|int|float):
+    ntr.delete(0, tk.END)
+    ntr.insert(0, text)
 
 def select_object(self,btn):
     if self.selected_object:
@@ -141,6 +163,12 @@ def only_numbers(event, type_: str):
         w.delete(0, tk.END)
         w.insert(0, new_content)
         w.icursor(cursor_pos)
+
+def resize_obj(self):
+    self.replace_obj.set_size((int(self.ntr_obj_sizex.get()), int(self.ntr_obj_sizey.get())))
+
+def move_obj(self):
+    self.replace_obj.set_position((int(self.ntr_obj_posx.get()), int(self.ntr_obj_posy.get())))
 
 def toggle_button(btn: ttk.Button):
     if btn.cget("text") == "True":

@@ -5,6 +5,8 @@ from api.utils import Inputs
 def bind_keys(self, event):
     self.root.bind("<KeyPress>", lambda _event: handle_keydown(self, _event))
     self.root.bind("<KeyRelease>", lambda _event: handle_keyup(self, _event))
+    self.game_frame.focus()
+    self.gameFrameFocused = True
 
     #self.root.bind("<Button-1>", lambda _event: handle_mouse_down(self, _event, 1))
     #self.root.bind("<Button-3>", lambda _event: handle_mouse_down(self, _event, 3))
@@ -15,6 +17,7 @@ def unbind_keys(self, event):
     Inputs.editor_release_key()
     self.root.unbind("<KeyPress>")
     self.root.unbind("<KeyRelease>")
+    self.gameFrameFocused = False
 
     #self.root.unbind("<Button-1>")
     #self.root.unbind("<Button-3>")

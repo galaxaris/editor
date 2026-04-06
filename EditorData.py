@@ -1,6 +1,7 @@
 from tkinter import ttk
 import pygame as pg
 
+from api.GameObject import GameObject
 from api.environment.Solid import Solid
 from editor.ReadApiGa import Param
 
@@ -35,20 +36,15 @@ class ObjectsLayout:
     def __init__(self):
         self.obj_list = []
 
-class Object:
-    def __init__(self, name: str, pos: tuple[int, int] | pg.Vector2, size: tuple[int, int] | pg.Vector2):
+class Object(Solid):
+    def __init__(self, pos: tuple[int, int] | pg.Vector2, size: tuple[int, int] | pg.Vector2, name: str):
+        super().__init__(pos, size)
         self.name = name
-        self.pos = pg.Vector2(pos)
-        self.size = pg.Vector2(size)
         self.layer = ""
-        self.tags = set()
-        self.solid = Solid(self.pos, self.size)
-        self.solid.set_color((200, 200, 200))
+        self.tags = {"editorObj"}
 
-    def resize(self, size):
-        self.size = pg.Vector2(size)
-        self.solid = Solid(self.pos, self.size)
-        self.solid.set_color((200, 200, 200))
+        self.set_color((200, 200, 200))
+        #self.set_texture(grass_texture)
 
 class ObjectDef:
     def __init__(self, name: str, class_ref: str, params: list[Param], tags: set):

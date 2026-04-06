@@ -139,15 +139,19 @@ def generate_placement_frame_ui(self) -> None:
 
     self.ntr_obj_posx = ttk.Entry(self.placement_frame)
     self.ntr_obj_posx.grid(row=1, column=0, padx=5, sticky="ew")
+    self.ntr_obj_posx.bind("<KeyRelease>", lambda event: (only_numbers(event, "int"), move_obj(self)))
 
     self.ntr_obj_posy = ttk.Entry(self.placement_frame)
     self.ntr_obj_posy.grid(row=1, column=1, padx=5, sticky="ew")
+    self.ntr_obj_posy.bind("<KeyRelease>", lambda event: (only_numbers(event, "int"), move_obj(self)))
 
     self.ntr_obj_sizex = ttk.Entry(self.placement_frame)
     self.ntr_obj_sizex.grid(row=1, column=2, padx=5, sticky="ew")
+    self.ntr_obj_sizex.bind("<KeyRelease>", lambda event: (only_numbers(event, "int"), resize_obj(self)))
 
     self.ntr_obj_sizey = ttk.Entry(self.placement_frame)
     self.ntr_obj_sizey.grid(row=1, column=3, padx=5, sticky="ew")
+    self.ntr_obj_sizey.bind("<KeyRelease>", lambda event: (only_numbers(event, "int"), resize_obj(self)))
 
     self.lbl_obj_size = ttk.Label(self.placement_frame, text="Size")
     self.lbl_obj_size.grid(row=0, column=2, columnspan=2, padx=5,sticky="ew")
