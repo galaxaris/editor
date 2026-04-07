@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 from api.utils.Debug import toggle
 from editor.EditorData import Object
-from api.utils.Inputs import get_mouse
+from api.utils.InputManager import get_mouse_position
 from api.GameObject import GameObject
 from api.physics.Collision import get_collided_objects
 
@@ -107,10 +107,10 @@ def retrieve_params(self) -> list|None:
 def place_object(self, event: tk.Event):
     if self.selected_object and self.gameFrameFocused:
         name = self.selected_object.cget("text")
-        self.objects_layout.obj_list.append(Object(get_mouse()/self.pg_app.game.scene.scale_ratio+self.pg_app.game.scene.camera.position, (10,10), name))
+        self.objects_layout.obj_list.append(Object(get_mouse_position()/self.pg_app.game.scene.scale_ratio+self.pg_app.game.scene.camera.position, (10,10), name))
 
 def replace_object(self, event: tk.Event):
-    mouse = GameObject(get_mouse()/self.pg_app.game.scene.scale_ratio+self.pg_app.game.scene.camera.position, (1,1))
+    mouse = GameObject(get_mouse_position()/self.pg_app.game.scene.scale_ratio+self.pg_app.game.scene.camera.position, (1,1))
     obj_touched = get_collided_objects(mouse, "editorObj",self.objects_layout.obj_list, 0, 0)
 
     if len(obj_touched) > 0:
@@ -193,17 +193,24 @@ def generate_build_params(self, class_name):
                 entry_p.grid(row=row, column=1, padx=5, sticky="ew")
 
                 entry_p.bind("<KeyRelease>", lambda event,type_=params.type_: only_numbers(event, type_))
+                if params.default_val is not None:
+                    entry_p.insert(0, params.default_val)
 
             case "str":
                 entry_p = ttk.Entry(self.sclbox_object_att)
                 entry_p.grid(row=row, column=1, padx=5, sticky="ew")
+                if params.default_val is not None:
+                    entry_p.insert(0, params.default_val)
 
             case "bool":
                 toggle_p = ttk.Button(self.sclbox_object_att, text = "True")
                 toggle_p.grid(row=row, column= 1, padx=5, sticky="ew")
                 toggle_p.configure(command= lambda btn=toggle_p: toggle_button(btn))
 
-            case t if any(x in t for x in ['tuple', 'list', 'Vector2']):
+                if params.default_val is not None:
+                    toggle_p.configure(text="True" if bool(params.default_val) else "False")
+
+            case t if any(x in t for x in ['tuple', 'list', 'Vector2', 'set']):
                 tuple_frame = ttk.Frame(self.sclbox_object_att, style="Noborder.TFrame")
                 tuple_frame.grid(row=row, column=1, sticky="news")
                 range_ = [i for i in range(param["count"]+1)]

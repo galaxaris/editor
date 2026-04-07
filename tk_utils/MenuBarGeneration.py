@@ -15,6 +15,11 @@ def generate_mb(self):
 
     self.env_menu.add_separator()
 
+    self.env_menu.add_command(label="Add an sfx", command=lambda: print("p"))
+    self.env_menu.add_command(label="Remove an sfx", command=lambda: print("r"))
+
+    self.env_menu.add_separator()
+
     self.env_menu.add_command(label="Choose a music", command=lambda: add_a_music(self))
 
     self.env_menu.add_separator()

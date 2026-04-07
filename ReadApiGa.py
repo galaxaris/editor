@@ -65,14 +65,14 @@ def get_params(obj, type_: str) -> list:
         else:
             p_type = str(p_obj.annotation).replace("class", "").strip("<").strip(">").strip().strip("'")
 
-        p_default = p_obj.default if p_obj.default is not inspect.Parameter.empty else "&ToFill"
+        p_default = p_obj.default if p_obj.default is not inspect.Parameter.empty else None
 
         params.append(Param(p_name, p_type, p_default))
 
     return params
 
 class Param:
-    def __init__(self, name: str, type_: str, default_val: str = "#ToFill"):
+    def __init__(self, name: str, type_: str, default_val: str|None = None):
         self.name = name
         self.type_ = type_
         self.default_val = default_val
@@ -84,7 +84,7 @@ class Param:
         types = self.type_.strip().split("|")
         self.type_ = types[0].strip()
 
-        if any(word in self.type_ for word in ["tuple", "list"]):
+        if any(word in self.type_ for word in ["tuple", "list", "set"]):
 
             type_name, separator, after = self.type_.partition("[")
 
