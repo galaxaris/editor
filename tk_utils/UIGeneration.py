@@ -1,4 +1,3 @@
-import tkinter as tk
 from os.path import join
 
 from editor.tk_utils.ButtonsFunctions import *

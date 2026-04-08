@@ -40,6 +40,8 @@ def save_object(self):
             params = retrieve_params(self)
             if params:
                 self.objects_info.add(name, self.cbb_object_class.get(), params, set())
+                if params[-1] != "No texture":
+                    self.objects_info.objects[-1].texture = params[-1]
 
                 btn_object = ttk.Button(self.sclbox_object, text= f"{self.cbb_object_class.get()} : {name}")
                 btn_object.pack(padx=5,pady=5, fill="x")
@@ -100,6 +102,8 @@ def retrieve_params(self) -> list|None:
             val = None
 
         params.append(val)
+
+    val = entries[len(entries)-1].cget("text") #the texture entry
     if len(params) == 0:
         return None
     return params
@@ -228,9 +232,24 @@ def generate_build_params(self, class_name):
 
         row += 1
 
+    label_p = ttk.Label(self.sclbox_object_att, text="Texture\n(.png)", padding=10)
+    label_p.grid(row=row, column=0, padx=5, pady=5, sticky="news")
+    texture_p = ttk.Button(self.sclbox_object_att, text="No texture")
+    texture_p.grid(row=row, column=1, padx=5, sticky="ew")
+    texture_p.configure(command=lambda btn=texture_p: add_texture(btn))
+    row += 1
+
     self.sclbox_object_att.grid_columnconfigure((0, 1), weight=1, uniform="col3")
     if row!=0:
         self.sclbox_object_att.grid_rowconfigure([i for i in range(row)], weight=1)
+
+def add_texture(btn: ttk.Button):
+    filetypes = (('Texture files', '*.png *.jpg *.jpeg'), ('Any files', '*.*'))
+
+    filename = filedialog.askopenfilename(title='Select a texture', initialdir='/', filetypes=filetypes)
+
+    if filename:
+        btn.configure(text=filename)
 
 def add_a_music(self):
     filetypes = (('Audio files', '*.mp3 *.wav *.ogg'),('Any files', '*.*'))
