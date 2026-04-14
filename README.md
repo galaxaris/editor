@@ -4,7 +4,7 @@
 
 ----
 
-<img src="assets/Images/icon.png" alt="Galaxaris Logo" width="100"/>
+<img src="icon.png" alt="Galaxaris Logo" width="100"/>
 
 <!-- TEST2 -->
 # ✨ Omicronde Editor ✨
